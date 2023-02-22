@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "700284481883",
+    "project_id": "medical-mind",
+    "storage_bucket": "medical-mind.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700284481883:android:2e9d031d7a1805d525ea7e",
+        "android_client_info": {
+          "package_name": "com.example.medical"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "700284481883-t8ka97bks310ioj9shqjkrc5ccqbn86q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfjVNKsqcy1K3JjPmE2A2SVsPamv7HBzI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "700284481883-t8ka97bks310ioj9shqjkrc5ccqbn86q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
