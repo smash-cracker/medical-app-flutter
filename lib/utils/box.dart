@@ -10,8 +10,8 @@ class LoginSignupBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
-      width: 80,
+      height: 100,
+      width: 100,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -21,7 +21,7 @@ class LoginSignupBox extends StatelessWidget {
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: 25,
+                fontSize: 28,
               ),
             ),
             Text(
@@ -29,14 +29,14 @@ class LoginSignupBox extends StatelessWidget {
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: 25,
+                fontSize: 28,
               ),
             ),
           ],
         ),
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(20),
         color: Color(color),
       ),
     );

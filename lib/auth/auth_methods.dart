@@ -39,10 +39,12 @@ class AuthMethods {
     String res = "some error occured";
 
     try {
+      print("trying to login");
       if (email.isNotEmpty || password.isNotEmpty) {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
         res = "success";
+        print("login");
       } else {
         res = "Please enter all fields";
       }

@@ -159,7 +159,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 selectedTileColor: Color(0xFFC31DC7),
                                 onChanged: (value) {
                                   setState(() {
-                                    selectedRadioButton = 'User';
+                                    selectedRadioButton = 'Patient';
                                   });
                                 }),
                           ),

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:medical/auth/user_check.dart';
 import 'package:medical/screens/login.dart';
 
 void main() async {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Medical',
       theme: ThemeData(
         textTheme: TextTheme(
           bodyText1: GoogleFonts.notoSansDisplay(),
@@ -27,7 +28,23 @@ class MyApp extends StatelessWidget {
           primary: Color(0xFF6b6bbf),
         ),
       ),
-      home: LoginScreen(),
+      home: HomePageBasic(),
+    );
+  }
+}
+
+class HomePageBasic extends StatefulWidget {
+  const HomePageBasic({super.key});
+
+  @override
+  State<HomePageBasic> createState() => _HomePageBasicState();
+}
+
+class _HomePageBasicState extends State<HomePageBasic> {
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: UserCheck(),
     );
   }
 }
