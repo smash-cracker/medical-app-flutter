@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+  final user = FirebaseAuth.instance.currentUser!;
   //signup
   Future<String> signupUser(
       {required String email,
@@ -55,7 +56,6 @@ class AuthMethods {
   }
 
   Future<void> signOut() async {
-    final user = FirebaseAuth.instance.currentUser!;
     await _auth.signOut();
     await FirebaseFirestore.instance
         .collection('users')
@@ -106,5 +106,27 @@ class AuthMethods {
     } on FirebaseAuthException catch (e) {
       print(e);
     }
+  }
+
+  Future<String> addInsurance({
+    required String name,
+    required String desc,
+    required int amount,
+  }) async {
+    String result = "some error occured";
+    try {
+      //add college to database
+      String docID = const Uuid().v1();
+      await _firestore.collection('insurances').doc(docID).set({
+        'name': name,
+        'insuranceID': docID,
+        'amount': amount,
+        'desc': desc,
+      });
+      result = "success";
+    } catch (err) {
+      result = err.toString();
+    }
+    return result;
   }
 }

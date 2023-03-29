@@ -40,6 +40,7 @@ dependencies:
   google_fonts: ^4.0.3
   intl: ^0.17.0
   loading_animation_widget: ^1.2.0+4
+  top_snackbar_flutter: ^3.0.0+1
   uuid: ^3.0.7
 
 dev_dependencies:
