@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medical/auth/auth_methods.dart';
+import 'package:medical/screens/login.dart';
 import 'package:medical/utils/insurance_box.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -24,6 +25,14 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
   late String _selectedTopic;
   late String _filtertopic;
   List<TextEditingController> _controllers = [];
+  void signOutUser() async {
+    await AuthMethods().signOut();
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => LoginScreen(),
+      ),
+    );
+  }
 
   @override
   void dispose() {
@@ -80,18 +89,29 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Hello',
-                      style: TextStyle(fontSize: 30),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Hello',
+                          style: TextStyle(fontSize: 30),
+                        ),
+                        Text(
+                          'Insurance Providers',
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Insurance Providers 👋',
-                      style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    IconButton(
+                      onPressed: () {
+                        signOutUser();
+                      },
+                      icon: Icon(Icons.logout),
                     ),
                   ],
                 ),
@@ -370,9 +390,10 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
                   int insuranceAmount =
                       int.tryParse(_insuranceAmountController.text) ?? 0;
                   final String result = await AuthMethods().addInsurance(
-                      name: insuranceName,
-                      amount: insuranceAmount,
-                      desc: _insuranceDescriptionController.text);
+                    name: insuranceName,
+                    amount: insuranceAmount,
+                    desc: _insuranceDescriptionController.text,
+                  );
                   Navigator.pop(context);
                   if (result == 'success') {
                     showTopSnackBar(
@@ -383,8 +404,9 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
                       dismissType: DismissType.onSwipe,
                       dismissDirection: [DismissDirection.startToEnd],
                     );
+                    _insuranceNameController.clear();
                     _insuranceAmountController.clear();
-                    _insuranceAmountController.clear();
+                    _insuranceDescriptionController.clear();
                   }
                 },
                 child: Text("Add Insurance"),
