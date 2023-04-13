@@ -5,7 +5,6 @@ import 'package:uuid/uuid.dart';
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final user = FirebaseAuth.instance.currentUser!;
   //signup
   Future<String> signupUser(
       {required String email,
@@ -56,7 +55,10 @@ class AuthMethods {
   }
 
   Future<void> signOut() async {
+    final user = FirebaseAuth.instance.currentUser!;
+
     await _auth.signOut();
+
     await FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)

@@ -2,11 +2,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:medical/screens/insurance_details.dart';
 
 class InsuranceBox extends StatelessWidget {
-  InsuranceBox({super.key, required this.amount, this.edit});
+  InsuranceBox(
+      {super.key, required this.amount, this.edit, required this.snap});
   final int amount;
   bool? edit = false;
+  Map<String, dynamic> snap;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +46,7 @@ class InsuranceBox extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Neuro Ultimate',
+                    snap['name'],
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -97,14 +100,23 @@ class InsuranceBox extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color.fromARGB(255, 138, 119, 187),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Icon(CupertinoIcons.arrow_right),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => InsuranceDetails(
+                                    insurance: true,
+                                    dSnap: snap,
+                                  )));
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color.fromARGB(255, 138, 119, 187),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Icon(CupertinoIcons.arrow_right),
+                          ),
                         ),
                       ),
                     ],

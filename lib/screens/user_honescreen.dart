@@ -158,7 +158,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => InsuranceHomescreen(),
+                          builder: (_) => InsuranceHomescreen(cpy: false),
                         ),
                       );
                     },

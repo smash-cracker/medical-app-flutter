@@ -37,7 +37,9 @@ class HomePage extends StatelessWidget {
               } else {
                 if (snap['type'] == 'Insurance') {
                   print(snap);
-                  return InsuranceHomescreen();
+                  return InsuranceHomescreen(
+                    cpy: true,
+                  );
                 } else {
                   return UserHomeScreen(
                     snap: snap,

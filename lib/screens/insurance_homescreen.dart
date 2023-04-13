@@ -12,6 +12,9 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class InsuranceHomescreen extends StatefulWidget {
+  final bool cpy;
+
+  const InsuranceHomescreen({super.key, required this.cpy});
   @override
   _InsuranceHomescreenState createState() => _InsuranceHomescreenState();
 }
@@ -257,7 +260,8 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
                                   child: Container(
                                     height: 210,
                                     child: InsuranceBox(
-                                      edit: true,
+                                      snap: snap,
+                                      edit: widget.cpy ? true : false,
                                       amount: snap['amount'],
                                     ),
                                   ),
