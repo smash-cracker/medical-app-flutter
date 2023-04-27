@@ -1,14 +1,37 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:intl/intl.dart';
+import 'package:medical/screens/patient_details.dart';
 
 class PatientBox extends StatelessWidget {
-  PatientBox({super.key, required this.data});
-  var data;
+  static bool isSameDay(DateTime? dateA, DateTime? dateB) {
+    return dateA?.year == dateB?.year &&
+        dateA?.month == dateB?.month &&
+        dateA?.day == dateB?.day;
+  }
 
+  final bookingData;
+
+  PatientBox({super.key, required this.data, this.bookingData});
+  var data;
+  String time = '';
+  String hour = '';
+  String ap = '';
   @override
   Widget build(BuildContext context) {
+    if (bookingData != null) {
+      String time = bookingData['consult_date'];
+
+      final consultDate = DateFormat.MMMd().add_y().add_jm().parse(time);
+      final isAfternoon = consultDate.hour >= 12;
+      hour = consultDate.hour.toString();
+
+      ap = isAfternoon ? 'pm' : 'am';
+    }
     return Scaffold(
       body: Container(
         height: 200,
@@ -32,8 +55,10 @@ class PatientBox extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image(
+                          fit: BoxFit.cover,
                           image: NetworkImage(
-                              'https://i.pinimg.com/736x/5c/8e/1c/5c8e1c34754753fa4a431cb35703122f.jpg'),
+                            data['photourl'],
+                          ),
                         ),
                       ),
                     ),
@@ -60,7 +85,7 @@ class PatientBox extends StatelessWidget {
                           height: 10,
                         ),
                         Text(
-                          'Pin 7954',
+                          'Pin ${bookingData["pin"]}',
                         ),
                       ],
                     ),
@@ -84,29 +109,43 @@ class PatientBox extends StatelessWidget {
                     SizedBox(
                       width: 10,
                     ),
-                    Text(
-                      'Today 10-30 am',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    bookingData != null
+                        ? Text(
+                            'Today $hour $ap',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : Container(),
                   ],
                 ),
               ],
             ),
-            Container(
-              width: 60,
-              height: 150,
-              decoration: BoxDecoration(
-                color: Color(0xFF11142c),
-                borderRadius: BorderRadius.circular(40),
-              ),
-              child: RotatedBox(
-                quarterTurns: -3,
-                child: Center(
-                  child: Text(
-                    'Details',
-                    style: TextStyle(color: Colors.white),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => PatientDetails(
+                      data: data,
+                      pin: bookingData["pin"],
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                width: 60,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: Color(0xFF11142c),
+                  borderRadius: BorderRadius.circular(40),
+                ),
+                child: RotatedBox(
+                  quarterTurns: -3,
+                  child: Center(
+                    child: Text(
+                      'Details',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ),

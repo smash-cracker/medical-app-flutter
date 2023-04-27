@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:medical/screens/homepage.dart';
 import 'package:medical/screens/login.dart';
-import 'package:medical/screens/user_honescreen.dart';
 
 class UserCheck extends StatelessWidget {
   const UserCheck({Key? key}) : super(key: key);

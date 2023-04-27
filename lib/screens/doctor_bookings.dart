@@ -294,19 +294,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:medical/screens/patient_details.dart';
 import 'package:medical/utils/patient_box.dart';
 
-class BookingList extends StatefulWidget {
-  BookingList({
+class DoctorBookingList extends StatefulWidget {
+  DoctorBookingList({
     super.key,
   });
 
   @override
-  _BookingListState createState() => _BookingListState();
+  _DoctorBookingListState createState() => _DoctorBookingListState();
 }
 
-class _BookingListState extends State<BookingList> {
+class _DoctorBookingListState extends State<DoctorBookingList> {
   final user = FirebaseAuth.instance.currentUser!;
 
   @override
@@ -330,14 +331,45 @@ class _BookingListState extends State<BookingList> {
 
           print(snap);
 
-          if (snap['bookings'] == null) {
+          if (snap['patients'] == null) {
             return Center(
               child: Text(
                 'No Bookings',
               ),
             );
           } else {
-            List<dynamic> bookingIds = snap['bookings'];
+            // return StreamBuilder<QuerySnapshot>(
+            //   stream:
+            //       FirebaseFirestore.instance.collection('booking').snapshots(),
+            //   builder: (context, snapshot) {
+            //     if (!snapshot.hasData) {
+            //       return CircularProgressIndicator();
+            //     }
+
+            //     // Get today's date as a DateTime object
+            //     final now = DateTime.now();
+
+            //     // Check if the consult_date field of each document is today's date
+            //     final documents = snapshot.data.docs;
+            //     final todayAppointments = documents.where((doc) {
+            //       final consultDateStr = doc['consult_date'] as String;
+            //       final consultDate =
+            //           DateFormat.MMMd().add_y().add_jm().parse(consultDateStr);
+            //       return now.isSameDayAs(consultDate);
+            //     }).toList();
+
+            //     return ListView.builder(
+            //       itemCount: todayAppointments.length,
+            //       itemBuilder: (context, index) {
+            //         final appointment = todayAppointments[index];
+            //         // Display the appointment data
+            //         return Text(appointment['consult_date']);
+            //       },
+            //     );
+            //   },
+            // );
+
+            List<dynamic> bookingIds = snap['patients'];
 
             return ListView.builder(
               itemCount: bookingIds.length,
@@ -356,29 +388,42 @@ class _BookingListState extends State<BookingList> {
                     Map<String, dynamic> data =
                         snapshot.data!.data() as Map<String, dynamic>;
 
-                    String doctorId = data['doctorID'];
-                    return FutureBuilder<DocumentSnapshot>(
-                      future: FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(doctorId)
-                          .get(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<DocumentSnapshot> snapshot) {
-                        if (!snapshot.hasData) {
-                          return Container();
-                        }
-                        Map<String, dynamic> datas =
-                            snapshot.data!.data() as Map<String, dynamic>;
-                        String doctorName = datas['name'];
-                        return SizedBox(
-                          height: 250,
-                          child: PatientBox(
-                            bookingData: data,
-                            data: datas,
-                          ),
-                        );
-                      },
-                    );
+                    final now = DateTime.now();
+
+                    final consultDateStr = data['consult_date'];
+
+                    final consultDate = DateFormat.MMMd()
+                        .add_y()
+                        .add_jm()
+                        .parse(consultDateStr);
+                    print(isSameDay(now, consultDate));
+
+                    if (isSameDay(now, consultDate)) {
+                      String doctorId = data['userID'];
+                      return FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(doctorId)
+                            .get(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<DocumentSnapshot> snapshot) {
+                          if (!snapshot.hasData) {
+                            return Container();
+                          }
+                          Map<String, dynamic> datas =
+                              snapshot.data!.data() as Map<String, dynamic>;
+                          String doctorName = datas['name'];
+                          return SizedBox(
+                            height: 250,
+                            child: PatientBox(
+                              bookingData: data,
+                              data: datas,
+                            ),
+                          );
+                        },
+                      );
+                    }
+                    return Container();
                   },
                 );
               },
@@ -387,6 +432,12 @@ class _BookingListState extends State<BookingList> {
         },
       ),
     );
+  }
+
+  static bool isSameDay(DateTime? dateA, DateTime? dateB) {
+    return dateA?.year == dateB?.year &&
+        dateA?.month == dateB?.month &&
+        dateA?.day == dateB?.day;
   }
 }
 

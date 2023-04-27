@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -47,6 +49,11 @@ class _BookDoctorState extends State<BookDoctor> {
       if (true) {
         print(_selected + 1);
         print(_selectedTime + 1);
+        var now = DateTime.now();
+        var formatter = DateFormat('yyyy');
+        String year = formatter.format(now);
+        var rng = Random();
+        var pin = rng.nextInt(9000) + 1000;
 
         await _firestore.collection('booking').doc(bookingID).set({
           'userID': userID,
@@ -54,7 +61,8 @@ class _BookDoctorState extends State<BookDoctor> {
           'date': date,
           'bookingID': bookingID,
           'consult_date':
-              '${DateFormat('MMMM').format(DateTime.now()).toString().substring(0, 3)}-${_selected + 1}-${_selectedTime + 1}-$noon'
+              '${DateFormat('MMMM').format(DateTime.now()).toString().substring(0, 3)}-${_selected + 1}-$year-${_selectedTime + 1}-$noon',
+          'pin': pin,
         });
         result = "success";
       }

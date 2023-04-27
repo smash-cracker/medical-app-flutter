@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:medical/screens/doctor_homescreen.dart';
 import 'package:medical/screens/insurance_homescreen.dart';
-import 'package:medical/screens/user_honescreen.dart';
+import 'package:medical/screens/user_homescreen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -28,15 +28,13 @@ class HomePage extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.done) {
               Map<String, dynamic> snap =
                   snapshot.data!.data() as Map<String, dynamic>;
-              print(snap);
-              if (snap['type'] == 'Doctor') {
-                print(snap);
+              print(snap['type']);
+              if (snap['type'] == 'doctor') {
                 return DoctorHomeScreen(
                   snap: snap,
                 );
               } else {
-                if (snap['type'] == 'Insurance') {
-                  print(snap);
+                if (snap['type'] == 'insurance') {
                   return InsuranceHomescreen(
                     cpy: true,
                   );

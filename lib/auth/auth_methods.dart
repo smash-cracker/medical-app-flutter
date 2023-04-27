@@ -1,16 +1,23 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:medical/auth/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   //signup
-  Future<String> signupUser(
-      {required String email,
-      required String password,
-      required String name,
-      required String type}) async {
+  Future<String> signupUser({
+    required String email,
+    required String password,
+    required String name,
+    required String type,
+    required Uint8List file,
+    String? hospital,
+    String? specialization,
+  }) async {
     String result = "some error occured";
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
@@ -18,13 +25,29 @@ class AuthMethods {
         UserCredential credential = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
 
-        //add college to database
-        await _firestore.collection('users').doc(credential.user!.uid).set({
-          'name': name,
-          'email': email,
-          'uid': credential.user!.uid,
-          'type': type,
-        });
+        String photourl =
+            await StorageMethods().uploadImageStorage('users', file, false);
+
+        if (hospital != null) {
+          await _firestore.collection('users').doc(credential.user!.uid).set({
+            'name': name,
+            'email': email,
+            'uid': credential.user!.uid,
+            'type': type,
+            'photourl': photourl,
+            'hospital': hospital,
+            'specialization': specialization,
+          });
+        } else {
+          await _firestore.collection('users').doc(credential.user!.uid).set({
+            'name': name,
+            'email': email,
+            'uid': credential.user!.uid,
+            'type': type,
+            'photourl': photourl,
+          });
+        }
+
         result = "success";
       }
     } catch (err) {
@@ -125,6 +148,48 @@ class AuthMethods {
         'amount': amount,
         'desc': desc,
       });
+      result = "success";
+    } catch (err) {
+      result = err.toString();
+    }
+    return result;
+  }
+
+  Future<String> updateInsurance({
+    required String name,
+    required String desc,
+    required int amount,
+    required String docID,
+  }) async {
+    String result = "some error occured";
+    try {
+      //add college to database
+      await _firestore.collection('insurances').doc(docID).update({
+        'name': name,
+        'insuranceID': docID,
+        'amount': amount,
+        'desc': desc,
+      });
+      result = "success";
+    } catch (err) {
+      result = err.toString();
+    }
+    return result;
+  }
+
+  Future<String> deleteInsurance({
+    required String docID,
+  }) async {
+    String result = "some error occured";
+    try {
+      //add college to database
+      _firestore
+          .collection('insurances')
+          .doc(docID)
+          .delete()
+          .then((_) => print('Document deleted'))
+          .catchError((error) => print('Failed to delete document: $error'));
+
       result = "success";
     } catch (err) {
       result = err.toString();

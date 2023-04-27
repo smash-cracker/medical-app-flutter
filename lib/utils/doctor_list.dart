@@ -12,6 +12,7 @@ class DoctorList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(searchText);
     return FutureBuilder(
       future: FirebaseFirestore.instance.collection('users').get(),
       builder: ((context, snapshot) {
@@ -37,23 +38,28 @@ class DoctorList extends StatelessWidget {
             ),
             itemBuilder: ((context, index) {
               final snap = doctorsList[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => MedicalHistory(
-                        dSnap: snap,
+              if (snap['name']
+                  .toString()
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase())) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => MedicalHistory(
+                          dSnap: snap,
+                        ),
+                        // BookDoctor(
+                        //   dSnap: snap,
+                        // ),
                       ),
-                      // BookDoctor(
-                      //   dSnap: snap,
-                      // ),
-                    ),
-                  );
-                },
-                child: DoctorBox(
-                  dSnap: snap,
-                ),
-              );
+                    );
+                  },
+                  child: DoctorBox(
+                    dSnap: snap,
+                  ),
+                );
+              }
             }),
           );
         }

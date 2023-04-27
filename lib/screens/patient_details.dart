@@ -9,7 +9,8 @@ import 'package:medical/screens/prescription.dart';
 import 'package:medical/utils/record_box.dart';
 
 class PatientDetails extends StatelessWidget {
-  PatientDetails({super.key, required this.data});
+  PatientDetails({super.key, required this.data, required this.pin});
+  final String pin;
   var data;
 
   @override
@@ -64,7 +65,7 @@ class PatientDetails extends StatelessWidget {
                               color: Color(0xFFf5f5da).withOpacity(0.5),
                             ),
                             child: Text(
-                              'Pin : 3456',
+                              'Pin : ${pin}',
                             ),
                           ),
                         ),

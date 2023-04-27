@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:medical/screens/doctor_bookings.dart';
 import 'package:medical/screens/patients.dart';
 import 'package:medical/screens/consultancy.dart';
 import 'package:medical/screens/insurance_homescreen.dart';
@@ -19,6 +22,17 @@ class DoctorHomeScreen extends StatefulWidget {
 }
 
 class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final user = FirebaseAuth.instance.currentUser!;
+  List<dynamic> getPatiendtIDListOfDoctor = [];
+  Future<int> getPatientsCount(final String matchid) async {
+    await _firestore.collection('users').doc(user.uid).get().then((doc) {
+      getPatiendtIDListOfDoctor = doc.data()!['patients'];
+    });
+    print(getPatiendtIDListOfDoctor);
+    return getPatiendtIDListOfDoctor.length;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,24 +80,24 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
             SizedBox(
               height: 20,
             ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(30),
-                ),
-                color: Color(0xFFfaf8f4),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Row(children: [
-                  Icon(CupertinoIcons.search),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Text('search for a doctor'),
-                ]),
-              ),
-            ),
+            // Container(
+            //   decoration: BoxDecoration(
+            //     borderRadius: BorderRadius.all(
+            //       Radius.circular(30),
+            //     ),
+            //     color: Color(0xFFfaf8f4),
+            //   ),
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(18.0),
+            //     child: Row(children: [
+            //       Icon(CupertinoIcons.search),
+            //       SizedBox(
+            //         width: 20,
+            //       ),
+            //       Text('search for a doctor'),
+            //     ]),
+            //   ),
+            // ),
             SizedBox(
               height: 20,
             ),
@@ -93,11 +107,11 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      // Navigator.of(context).push(
-                      //   MaterialPageRoute(
-                      //     builder: (_) => Consultancy(),
-                      //   ),
-                      // );
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => DoctorBookingList(),
+                        ),
+                      );
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -195,7 +209,15 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                                     fontSize: 14,
                                   ),
                                 ),
-                                Text('6 pharmacies'),
+                                FutureBuilder<int>(
+                                    future: getPatientsCount(user.uid),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        int count = snapshot.data!;
+                                        return Text('$count pharmacies');
+                                      }
+                                      return Container();
+                                    }),
                               ],
                             ),
                           ),

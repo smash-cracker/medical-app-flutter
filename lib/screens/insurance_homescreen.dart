@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, prefer_interpolation_to_compose_strings, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,6 +24,7 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
   final _insuranceNameController = TextEditingController();
   final _insuranceAmountController = TextEditingController();
   final _insuranceDescriptionController = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser;
 
   double _currentValue = 100000;
   late String _selectedTopic;
@@ -91,38 +93,54 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
+              widget.cpy
+                  ? Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Hello',
+                                style: TextStyle(fontSize: 30),
+                              ),
+                              Text(
+                                'Insurance Providers',
+                                style: TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              signOutUser();
+                            },
+                            icon: Icon(Icons.logout),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Hello',
+                          'Choose',
                           style: TextStyle(fontSize: 30),
                         ),
                         Text(
-                          'Insurance Providers',
+                          'Your insurance',
                           style: TextStyle(
                               fontSize: 30, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
-                    IconButton(
-                      onPressed: () {
-                        signOutUser();
-                      },
-                      icon: Icon(Icons.logout),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Text('Welcome to insurance dashboard!'),
+
+              widget.cpy
+                  ? Text('Welcome to insurance dashboard!')
+                  : Container(),
               SizedBox(
                 height: 20,
               ),
@@ -226,52 +244,102 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
               ),
 
               Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('insurances')
-                        .snapshots(),
-                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        return Text('Something went wrong');
-                      }
+                child: widget.cpy
+                    ? StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('insurances')
+                            .where('uid', isEqualTo: user!.uid)
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Something went wrong');
+                          }
 
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
-                      }
-                      final documents = snapshot.data!.docs;
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container();
+                          }
+                          final documents = snapshot.data!.docs;
 
-                      return ListView.builder(
-                          itemCount: documents.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final document = documents[index];
-                            final data = document.data();
-                            Map<String, dynamic> snap =
-                                document.data() as Map<String, dynamic>;
+                          return ListView.builder(
+                              itemCount: documents.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final document = documents[index];
+                                final data = document.data();
+                                Map<String, dynamic> snap =
+                                    document.data() as Map<String, dynamic>;
 
-                            if (data != null) {
-                              print(_currentValue.runtimeType);
-                              print('<');
-                              print(snap['amount'].runtimeType);
-                              if (_currentValue >= snap['amount']) {
-                                print('true');
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Container(
-                                    height: 210,
-                                    child: InsuranceBox(
-                                      snap: snap,
-                                      edit: widget.cpy ? true : false,
-                                      amount: snap['amount'],
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return Container();
-                              }
-                            }
-                          });
-                    }),
+                                if (data != null) {
+                                  print(_currentValue.runtimeType);
+                                  print('<');
+                                  print(snap['amount'].runtimeType);
+                                  if (_currentValue >= snap['amount']) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Container(
+                                        height: 210,
+                                        child: InsuranceBox(
+                                          snap: snap,
+                                          edit: widget.cpy ? true : false,
+                                          amount: snap['amount'],
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                }
+                              });
+                        })
+                    : StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('insurances')
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Something went wrong');
+                          }
+
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container();
+                          }
+                          final documents = snapshot.data!.docs;
+
+                          return ListView.builder(
+                              itemCount: documents.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final document = documents[index];
+                                final data = document.data();
+                                Map<String, dynamic> snap =
+                                    document.data() as Map<String, dynamic>;
+
+                                if (data != null) {
+                                  print(_currentValue.runtimeType);
+                                  print('<');
+                                  print(snap['amount'].runtimeType);
+                                  if (_currentValue >= snap['amount']) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Container(
+                                        height: 210,
+                                        child: InsuranceBox(
+                                          snap: snap,
+                                          edit: widget.cpy ? true : false,
+                                          amount: snap['amount'],
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                }
+                              });
+                        }),
               ),
               // Expanded(
               //   child: ListView.builder(
@@ -301,15 +369,17 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Color.fromARGB(255, 138, 119, 187),
-        onPressed: () {
-          _showAddInsuranceModal();
-        },
-        child: Icon(
-          Icons.add,
-        ),
-      ),
+      floatingActionButton: widget.cpy
+          ? FloatingActionButton(
+              backgroundColor: Color.fromARGB(255, 138, 119, 187),
+              onPressed: () {
+                _showAddInsuranceModal();
+              },
+              child: Icon(
+                Icons.add,
+              ),
+            )
+          : Container(),
     );
   }
 
@@ -358,7 +428,7 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
                   border: InputBorder.none,
                   labelText: "Insurance Description",
                 ),
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.text,
               ),
               SizedBox(height: 16.0),
               // Expanded(

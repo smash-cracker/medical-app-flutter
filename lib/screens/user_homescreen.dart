@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -18,6 +20,8 @@ class UserHomeScreen extends StatefulWidget {
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
+  final user = FirebaseAuth.instance.currentUser!;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +136,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Center(
-                                  child: FaIcon(FontAwesomeIcons.comments),
+                                  child: FaIcon(FontAwesomeIcons.pills),
                                 ),
                               ),
                             ),
@@ -146,7 +150,28 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                 fontSize: 14,
                               ),
                             ),
-                            Text('1 upcoming'),
+                            FutureBuilder<DocumentSnapshot>(
+                                future: FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(user.uid)
+                                    .get(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return CircularProgressIndicator();
+                                  }
+
+                                  Map<String, dynamic> snap = snapshot.data!
+                                      .data() as Map<String, dynamic>;
+
+                                  if (snap['bookings'] == null) {
+                                    return Text('0 bookings');
+                                  } else {
+                                    final bookingIds = snap['bookings'].length;
+                                    return Text(
+                                        '${bookingIds.toString()} bookings');
+                                  }
+                                })
                           ],
                         ),
                       ),
@@ -207,8 +232,21 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     fontSize: 14,
                                   ),
                                 ),
-                                Text(
-                                  '6 insurance',
+                                FutureBuilder<int>(
+                                  future: FirebaseFirestore.instance
+                                      .collection('insurances')
+                                      .get()
+                                      .then((querySnapshot) =>
+                                          querySnapshot.size),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return Text(
+                                          '${snapshot.data.toString()} available');
+                                    } else {
+                                      return CircularProgressIndicator();
+                                    }
+                                  },
                                 ),
                                 // Text('6 pharmacies'),
                               ],

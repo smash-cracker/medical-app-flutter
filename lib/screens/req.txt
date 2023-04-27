@@ -4,3 +4,6 @@ insurance scheme details
 doctor page consulation details
 patient prescription no edit access x
 
+
+delete
+show only insurances of a particular insurancer
