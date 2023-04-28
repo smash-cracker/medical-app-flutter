@@ -3,7 +3,8 @@
 import 'package:flutter/material.dart';
 
 class RecordBox extends StatelessWidget {
-  const RecordBox({super.key});
+  final doctorData;
+  const RecordBox({super.key, this.doctorData});
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +53,15 @@ class RecordBox extends StatelessWidget {
                         SizedBox(
                           width: 10,
                         ),
-                        Text(
-                          'Surgery',
-                          style: TextStyle(fontSize: 20),
-                        ),
+                        doctorData != null
+                            ? Text(
+                                doctorData['Specialization'],
+                                style: TextStyle(fontSize: 20),
+                              )
+                            : Text(
+                                'Specialization',
+                                style: TextStyle(fontSize: 20),
+                              ),
                       ],
                     ),
                     Row(
@@ -64,7 +70,9 @@ class RecordBox extends StatelessWidget {
                         SizedBox(
                           width: 20,
                         ),
-                        Text('Dr. Abhijith'),
+                        doctorData != null
+                            ? Text(doctorData['name'])
+                            : Text('Dr. Abhijith'),
                       ],
                     ),
                   ],

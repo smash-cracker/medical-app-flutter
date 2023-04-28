@@ -44,16 +44,16 @@ class DoctorList extends StatelessWidget {
                   .contains(searchText.toLowerCase())) {
                 return GestureDetector(
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => MedicalHistory(
-                          dSnap: snap,
-                        ),
-                        // BookDoctor(
-                        //   dSnap: snap,
-                        // ),
-                      ),
-                    );
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (_) => MedicalHistory(
+                    //       dSnap: snap,
+                    //     ),
+                    //     // BookDoctor(
+                    //     //   dSnap: snap,
+                    //     // ),
+                    //   ),
+                    // );
                   },
                   child: DoctorBox(
                     dSnap: snap,

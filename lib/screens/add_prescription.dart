@@ -1,26 +1,148 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medical/utils/medicine_box.dart';
+import 'package:uuid/uuid.dart';
+
+class FirebaseApi {
+  static UploadTask? uploadFile(String destination, File file) {
+    try {
+      final ref = FirebaseStorage.instance.ref(destination);
+
+      return ref.putFile(file);
+    } on FirebaseException catch (e) {
+      print(e);
+    }
+  }
+}
 
 class MedicinePrescription {
   String medicineName;
+
   String time;
 
   MedicinePrescription(this.medicineName, this.time);
+
+  Map<String, dynamic> toJson() {
+    return {
+      'medicineName': this.medicineName,
+      'time': this.time,
+    };
+  }
 }
 
 class AddPrescription extends StatefulWidget {
-  const AddPrescription({super.key});
+  const AddPrescription({super.key, required this.patientID});
+  final String patientID;
 
   @override
   State<AddPrescription> createState() => _AddPrescriptionState();
 }
 
 class _AddPrescriptionState extends State<AddPrescription> {
+  PlatformFile? pickedFile;
+  UploadTask? task;
+  Future selectFile() async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+
+    if (result == null) return;
+    final path = result.files.first;
+
+    setState(() {
+      pickedFile = path;
+      subImagesArray.add(
+        pickedFile!.path!,
+      );
+    });
+  }
+
+  TextEditingController _desc = TextEditingController();
+  //upload
+
+  Future uploadPrescription() async {
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final user = FirebaseAuth.instance.currentUser!;
+    final fileMain = File(pickedFile!.path!);
+    String postId = const Uuid().v1();
+    final destination = 'prescriptions/$postId';
+
+    task = FirebaseApi.uploadFile(destination, fileMain);
+    setState(() {});
+
+    final snapshot = await task!.whenComplete(() {});
+    final urlDownload = await snapshot.ref.getDownloadURL();
+
+    try {
+      _firestore.collection('prescriptions').doc(postId).set({
+        'prescriptionID': postId,
+        'doctorID': user.uid,
+        'time': DateTime.now(),
+        'description': _desc.text,
+        'patientID': widget.patientID,
+        'subPics': [],
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+
+    try {
+      _firestore.collection('users').doc(widget.patientID).update({
+        'prescriptions': FieldValue.arrayUnion([postId])
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+
+    try {
+      int count = 0;
+      for (var x in subImagesArray) {
+        final destination = 'prescriptions/${postId}/${count}';
+        var file = File(x);
+        task = FirebaseApi.uploadFile(destination, file);
+        setState(() {});
+
+        final snapshot = await task!.whenComplete(() {});
+        final urlDownload = await snapshot.ref.getDownloadURL();
+        try {
+          _firestore.collection('prescriptions').doc(postId).update({
+            'subPics': FieldValue.arrayUnion([urlDownload])
+          });
+        } catch (e) {
+          print(e.toString());
+        }
+        count += 1;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    try {
+      FirebaseFirestore.instance
+          .collection('prescriptions')
+          .doc(postId)
+          .update({
+            'medicines': FieldValue.arrayUnion(
+                medicinePrescriptions.map((m) => m.toJson()).toList())
+          })
+          .then((value) => print("Medicines added to document"))
+          .catchError((error) => print("Failed to add medicines: $error"));
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+  //xxxxxxxxxxxx
+
   String? _selectedMedicine;
+  List<String> subImagesArray = [];
+
   String? _selectedTime;
   List<MedicinePrescription> medicinePrescriptions = [];
   void _addMedicine() {
@@ -87,7 +209,9 @@ class _AddPrescriptionState extends State<AddPrescription> {
                       ],
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        uploadPrescription();
+                      },
                       child: FaIcon(
                         FontAwesomeIcons.xmark,
                       ),
@@ -163,6 +287,7 @@ class _AddPrescriptionState extends State<AddPrescription> {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: TextField(
+                  controller: _desc,
                   maxLines: 10,
                   decoration: InputDecoration(
                     border: InputBorder.none,
@@ -184,7 +309,7 @@ class _AddPrescriptionState extends State<AddPrescription> {
               GridView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: 5,
+                itemCount: subImagesArray.length + 1,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisExtent: 180,
                   crossAxisCount: 2,
@@ -195,11 +320,20 @@ class _AddPrescriptionState extends State<AddPrescription> {
                 itemBuilder: ((context, index) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: Image(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFhVMo9bf-noQDJhnL71_K8KZLUi03B7Ofsw&usqp=CAU'),
-                    ),
+                    child: index == subImagesArray.length
+                        ? GestureDetector(
+                            onTap: selectFile,
+                            child: Image(
+                              fit: BoxFit.cover,
+                              image: AssetImage('assets/add_image.png'),
+                            ),
+                          )
+                        : Image.file(
+                            fit: BoxFit.cover,
+                            File(
+                              subImagesArray[index],
+                            ),
+                          ),
                   );
                 }),
               ),

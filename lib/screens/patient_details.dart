@@ -1,9 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:medical/screens/add_prescription.dart';
 import 'package:medical/screens/prescription.dart';
 import 'package:medical/utils/record_box.dart';
@@ -20,7 +19,9 @@ class PatientDetails extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => AddPrescription(),
+              builder: (_) => AddPrescription(
+                patientID: data['uid'],
+              ),
             ),
           );
         },
@@ -185,13 +186,89 @@ class PatientDetails extends StatelessWidget {
                 ],
               ),
             ),
-            GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => Prescription(),
+            Expanded(
+              child: FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(data['uid'])
+                    .get(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator();
+                  }
+
+                  Map<String, dynamic> snap =
+                      snapshot.data!.data() as Map<String, dynamic>;
+
+                  print(snap);
+
+                  if (snap['prescriptions'] == null) {
+                    return Center(
+                      child: Text(
+                        'No prescriptions',
                       ),
-                    ),
-                child: RecordBox()),
+                    );
+                  } else {
+                    List<dynamic> bookingIds = snap['prescriptions'];
+
+                    return ListView.builder(
+                      itemCount: bookingIds.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        String bookingId = bookingIds[index];
+                        return FutureBuilder<DocumentSnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('prescriptions')
+                              .doc(bookingId)
+                              .get(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            if (!snapshot.hasData) {
+                              return Container();
+                            }
+                            Map<String, dynamic> Prescriptiondata =
+                                snapshot.data!.data() as Map<String, dynamic>;
+
+                            String doctorId = Prescriptiondata['doctorID'];
+                            return FutureBuilder<DocumentSnapshot>(
+                              future: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(doctorId)
+                                  .get(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                                if (!snapshot.hasData) {
+                                  return Container();
+                                }
+                                Map<String, dynamic> Doctordata = snapshot.data!
+                                    .data() as Map<String, dynamic>;
+                                String doctorName = Doctordata['name'];
+                                return SizedBox(
+                                  height: 150,
+                                  child: GestureDetector(
+                                    onTap: () => Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => Prescription(
+                                          doctorName: doctorName,
+                                          prescription: Prescriptiondata,
+                                        ),
+                                      ),
+                                    ),
+                                    child: RecordBox(
+                                      doctorData: Doctordata,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
           ],
         ),
       ),
