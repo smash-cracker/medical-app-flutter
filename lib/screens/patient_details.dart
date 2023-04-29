@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:medical/screens/add_prescription.dart';
@@ -8,12 +9,19 @@ import 'package:medical/screens/prescription.dart';
 import 'package:medical/utils/record_box.dart';
 
 class PatientDetails extends StatelessWidget {
-  PatientDetails({super.key, required this.data, required this.pin});
+  PatientDetails({
+    super.key,
+    required this.data,
+    required this.pin,
+    required this.fromPatient,
+  });
   final String pin;
   var data;
+  bool fromPatient;
 
   @override
   Widget build(BuildContext context) {
+    final auth = FirebaseAuth.instance.currentUser!.uid;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -32,10 +40,15 @@ class PatientDetails extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
-        title: Text(
-          'Patient Details',
-          style: TextStyle(color: Colors.black),
-        ),
+        title: fromPatient
+            ? Text(
+                'Doctor Details',
+                style: TextStyle(color: Colors.black),
+              )
+            : Text(
+                'Patient Details',
+                style: TextStyle(color: Colors.black),
+              ),
         leading: Icon(
           CupertinoIcons.back,
           color: Colors.black,
@@ -148,7 +161,7 @@ class PatientDetails extends StatelessWidget {
                                   height: 150.0,
                                   width: 150.0,
                                   image: NetworkImage(
-                                    'https://i.pinimg.com/564x/de/c6/59/dec659601d1a0f62f950d5ed36d7a16f.jpg',
+                                    data['photourl'],
                                   ),
                                 ),
                               ),
@@ -190,7 +203,7 @@ class PatientDetails extends StatelessWidget {
               child: FutureBuilder<DocumentSnapshot>(
                 future: FirebaseFirestore.instance
                     .collection('users')
-                    .doc(data['uid'])
+                    .doc(auth)
                     .get(),
                 builder: (BuildContext context,
                     AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -230,37 +243,41 @@ class PatientDetails extends StatelessWidget {
                                 snapshot.data!.data() as Map<String, dynamic>;
 
                             String doctorId = Prescriptiondata['doctorID'];
-                            return FutureBuilder<DocumentSnapshot>(
-                              future: FirebaseFirestore.instance
-                                  .collection('users')
-                                  .doc(doctorId)
-                                  .get(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<DocumentSnapshot> snapshot) {
-                                if (!snapshot.hasData) {
-                                  return Container();
-                                }
-                                Map<String, dynamic> Doctordata = snapshot.data!
-                                    .data() as Map<String, dynamic>;
-                                String doctorName = Doctordata['name'];
-                                return SizedBox(
-                                  height: 150,
-                                  child: GestureDetector(
-                                    onTap: () => Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => Prescription(
-                                          doctorName: doctorName,
-                                          prescription: Prescriptiondata,
+                            if (doctorId == data['uid']) {
+                              return FutureBuilder<DocumentSnapshot>(
+                                future: FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(doctorId)
+                                    .get(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Container();
+                                  }
+                                  Map<String, dynamic> Doctordata =
+                                      snapshot.data!.data()
+                                          as Map<String, dynamic>;
+                                  String doctorName = Doctordata['name'];
+                                  return SizedBox(
+                                    height: 150,
+                                    child: GestureDetector(
+                                      onTap: () => Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => Prescription(
+                                            doctorName: doctorName,
+                                            prescription: Prescriptiondata,
+                                          ),
                                         ),
                                       ),
+                                      child: RecordBox(
+                                        doctorData: Doctordata,
+                                      ),
                                     ),
-                                    child: RecordBox(
-                                      doctorData: Doctordata,
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
+                                  );
+                                },
+                              );
+                            }
+                            return Container();
                           },
                         );
                       },

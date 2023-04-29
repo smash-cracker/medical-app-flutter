@@ -61,7 +61,7 @@ class _BookDoctorState extends State<BookDoctor> {
           'date': date,
           'bookingID': bookingID,
           'consult_date':
-              '${DateFormat('MMMM').format(DateTime.now()).toString().substring(0, 3)}-${_selected + 1}-$year-${_selectedTime + 1}-$noon',
+              '${DateFormat('MMMM').format(DateTime.now()).toString().substring(0, 3)} ${_selected + 1} $year ${_selectedTime + 1}:00 $noon',
           'pin': pin,
         });
         result = "success";
@@ -147,7 +147,7 @@ class _BookDoctorState extends State<BookDoctor> {
           onTap: () {
             setState(() {
               _selectedTime = index;
-              noon = index < 11 ? 'am' : 'pm';
+              noon = index < 11 ? 'AM' : 'PM';
             });
           },
           child: Container(

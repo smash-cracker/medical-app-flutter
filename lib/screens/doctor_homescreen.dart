@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:medical/screens/doctor_bookings.dart';
 import 'package:medical/screens/patients.dart';
 import 'package:medical/screens/consultancy.dart';
@@ -29,8 +30,45 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     await _firestore.collection('users').doc(user.uid).get().then((doc) {
       getPatiendtIDListOfDoctor = doc.data()!['patients'];
     });
-    print(getPatiendtIDListOfDoctor);
     return getPatiendtIDListOfDoctor.length;
+  }
+
+  static bool isSameDay(DateTime? dateA, DateTime? dateB) {
+    return dateA?.year == dateB?.year &&
+        dateA?.month == dateB?.month &&
+        dateA?.day == dateB?.day;
+  }
+
+  Future<int> findCount(final String userId) async {
+    int count = 0;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get()
+        .then((doc) {
+      getPatiendtIDListOfDoctor = doc.data()!['patients'];
+
+      for (var x in getPatiendtIDListOfDoctor) {
+        print("checking for " + x);
+        FirebaseFirestore.instance
+            .collection('booking')
+            .doc(x)
+            .get()
+            .then((doc) {
+          final date = doc.data()!['consult_date'];
+          final now = DateTime.now();
+          final consultDate = DateFormat.MMMd().add_y().add_jm().parse(date);
+          print(isSameDay(now, consultDate));
+
+          if (isSameDay(now, consultDate)) {
+            count += 1;
+          }
+        });
+      }
+    });
+    print(count);
+
+    return count;
   }
 
   @override
@@ -80,27 +118,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
             SizedBox(
               height: 20,
             ),
-            // Container(
-            //   decoration: BoxDecoration(
-            //     borderRadius: BorderRadius.all(
-            //       Radius.circular(30),
-            //     ),
-            //     color: Color(0xFFfaf8f4),
-            //   ),
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(18.0),
-            //     child: Row(children: [
-            //       Icon(CupertinoIcons.search),
-            //       SizedBox(
-            //         width: 20,
-            //       ),
-            //       Text('search for a doctor'),
-            //     ]),
-            //   ),
-            // ),
-            SizedBox(
-              height: 20,
-            ),
+
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -152,7 +170,15 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                                 fontSize: 14,
                               ),
                             ),
-                            Text('5 patients'),
+                            FutureBuilder<int>(
+                                future: findCount(user.uid),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    int count = snapshot.data!;
+                                    return Text('$count patients');
+                                  }
+                                  return Container();
+                                }),
                           ],
                         ),
                       ),
@@ -214,7 +240,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         int count = snapshot.data!;
-                                        return Text('$count pharmacies');
+                                        return Text('$count patients');
                                       }
                                       return Container();
                                     }),

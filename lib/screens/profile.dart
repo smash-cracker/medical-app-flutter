@@ -54,6 +54,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final user = FirebaseAuth.instance.currentUser!;
+    CollectionReference users = _firestore.collection('users');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -82,88 +85,87 @@ class _ProfilePageState extends State<ProfilePage> {
                 return Scaffold(
                   backgroundColor: Colors.white,
                   body: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ProfilePic(
-                          name: name,
-                        ),
-                        const SizedBox(height: 20.0),
-                        ProfileMenu(
-                          press: () {
-                            // Navigator.of(context).push(
-                            //   MaterialPageRoute(
-                            //     builder: (context) => ProfilePageNew(),
-                            //   ),
-                            // );
-                          },
-                          menuText: 'Account Settings',
-                          icon: CupertinoIcons.person_crop_circle,
-                        ),
-                        ProfileMenu(
-                          press: () {
-                            // Navigator.of(context).push(MaterialPageRoute(
-                            //     builder: (context) =>
-                            //         PersonalApplicationsView()));
-                          },
-                          menuText: "menu",
-                          icon: CupertinoIcons.doc_on_clipboard,
-                        ),
-                        // ProfileMenu(
-                        //   press: () {
-                        //     // Navigator.of(context).push(
-                        //     //   MaterialPageRoute(
-                        //     //     builder: (context) => PersonalRequestsView(),
-                        //     //   ),
-                        //     // );
-                        //   },
-                        //   menuText: "menu",
-                        //   icon: CupertinoIcons.arrow_left_right_circle,
-                        // ),
-                        ProfileMenu(
-                          press: () {},
-                          menuText: "Settings",
-                          icon: CupertinoIcons.settings,
-                        ),
-                        ProfileMenu(
-                          press: () {
-                            signOutUser();
-                          },
-                          menuText: "Log Out",
-                          icon: CupertinoIcons.lock_circle,
-                        ),
-                        ProfileMenu(
-                          press: () {
-                            // Wiredash.of(context)
-                            //     .show(inheritMaterialTheme: true);
-                          },
-                          menuText: "Help Center",
-                          icon: CupertinoIcons.person_2,
-                        ),
-                      ],
-                    ),
+                    child: FutureBuilder<DocumentSnapshot>(
+                        future: users.doc(user.uid).get(),
+                        builder: (((context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: LoadingAnimationWidget.waveDots(
+                                  color: Colors.black, size: 40),
+                            );
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            Map<String, dynamic> snap =
+                                snapshot.data!.data() as Map<String, dynamic>;
+                            print(snap['type']);
+                            return Column(
+                              children: [
+                                ProfilePic(
+                                  name: name,
+                                ),
+                                const SizedBox(height: 20.0),
+                                ProfileMenu(
+                                  press: () {
+                                    // Navigator.of(context).push(
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => ProfilePageNew(),
+                                    //   ),
+                                    // );
+                                  },
+                                  menuText: 'Account Settings',
+                                  icon: CupertinoIcons.person_crop_circle,
+                                ),
+                                ProfileMenu(
+                                  press: () {
+                                    // Navigator.of(context).push(MaterialPageRoute(
+                                    //     builder: (context) =>
+                                    //         PersonalApplicationsView()));
+                                  },
+                                  menuText: "menu",
+                                  icon: CupertinoIcons.doc_on_clipboard,
+                                ),
+                                // ProfileMenu(
+                                //   press: () {
+                                //     // Navigator.of(context).push(
+                                //     //   MaterialPageRoute(
+                                //     //     builder: (context) => PersonalRequestsView(),
+                                //     //   ),
+                                //     // );
+                                //   },
+                                //   menuText: "menu",
+                                //   icon: CupertinoIcons.arrow_left_right_circle,
+                                // ),
+                                ProfileMenu(
+                                  press: () {},
+                                  menuText: "Settings",
+                                  icon: CupertinoIcons.settings,
+                                ),
+                                ProfileMenu(
+                                  press: () {
+                                    signOutUser();
+                                  },
+                                  menuText: "Log Out",
+                                  icon: CupertinoIcons.lock_circle,
+                                ),
+                                ProfileMenu(
+                                  press: () {
+                                    // Wiredash.of(context)
+                                    //     .show(inheritMaterialTheme: true);
+                                  },
+                                  menuText: "Help Center",
+                                  icon: CupertinoIcons.person_2,
+                                ),
+                              ],
+                            );
+                          }
+                          return Container();
+                        }))),
                   ),
                 );
               } else {
-                return Column(
-                  children: [
-                    ProfilePic(
-                      name: name,
-                    ),
-                    const SizedBox(height: 20.0),
-                    ProfileMenu(
-                      press: () {
-                        signOutUser();
-                      },
-                      menuText: 'log in',
-                      icon: CupertinoIcons.person_crop_circle,
-                    ),
-                    ProfileMenu(
-                      press: () {},
-                      menuText: "Help Center",
-                      icon: CupertinoIcons.person_2,
-                    ),
-                  ],
-                );
+                return Container();
               }
             } else {
               return Container();

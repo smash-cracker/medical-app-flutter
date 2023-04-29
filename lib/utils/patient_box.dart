@@ -21,12 +21,13 @@ class PatientBox extends StatelessWidget {
   String time = '';
   String hour = '';
   String ap = '';
+  DateTime consultDate = DateTime.now();
   @override
   Widget build(BuildContext context) {
     if (bookingData != null) {
       String time = bookingData['consult_date'];
 
-      final consultDate = DateFormat.MMMd().add_y().add_jm().parse(time);
+      consultDate = DateFormat.MMMd().add_y().add_jm().parse(time);
       final isAfternoon = consultDate.hour >= 12;
       hour = consultDate.hour.toString();
 
@@ -111,7 +112,7 @@ class PatientBox extends StatelessWidget {
                     ),
                     bookingData != null
                         ? Text(
-                            'Today $hour $ap',
+                            '${consultDate.day}-${consultDate.month}-${consultDate.year} $hour $ap',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
@@ -126,6 +127,7 @@ class PatientBox extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => PatientDetails(
+                      fromPatient: true,
                       data: data,
                       pin: bookingData["pin"],
                     ),

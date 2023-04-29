@@ -37,6 +37,7 @@ class AuthMethods {
             'photourl': photourl,
             'hospital': hospital,
             'specialization': specialization,
+            'patients': [],
           });
         } else {
           await _firestore.collection('users').doc(credential.user!.uid).set({

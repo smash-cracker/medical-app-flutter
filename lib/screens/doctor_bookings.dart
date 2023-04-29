@@ -338,37 +338,6 @@ class _DoctorBookingListState extends State<DoctorBookingList> {
               ),
             );
           } else {
-            // return StreamBuilder<QuerySnapshot>(
-            //   stream:
-            //       FirebaseFirestore.instance.collection('booking').snapshots(),
-            //   builder: (context, snapshot) {
-            //     if (!snapshot.hasData) {
-            //       return CircularProgressIndicator();
-            //     }
-
-            //     // Get today's date as a DateTime object
-            //     final now = DateTime.now();
-
-            //     // Check if the consult_date field of each document is today's date
-            //     final documents = snapshot.data.docs;
-            //     final todayAppointments = documents.where((doc) {
-            //       final consultDateStr = doc['consult_date'] as String;
-            //       final consultDate =
-            //           DateFormat.MMMd().add_y().add_jm().parse(consultDateStr);
-            //       return now.isSameDayAs(consultDate);
-            //     }).toList();
-
-            //     return ListView.builder(
-            //       itemCount: todayAppointments.length,
-            //       itemBuilder: (context, index) {
-            //         final appointment = todayAppointments[index];
-            //         // Display the appointment data
-            //         return Text(appointment['consult_date']);
-            //       },
-            //     );
-            //   },
-            // );
-
             List<dynamic> bookingIds = snap['patients'];
 
             return ListView.builder(
