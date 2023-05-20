@@ -413,27 +413,6 @@ class _BasicDetails extends State<BasicDetails> {
                                       border: OutlineInputBorder(),
                                     ),
                                   ),
-                                  SizedBox(height: 24.0),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      String allergies =
-                                          allergiesController.text;
-                                      String surgeries =
-                                          surgeriesController.text;
-                                      String extraDetails =
-                                          extraDetailsController.text;
-
-                                      // Perform actions with the entered data, such as saving it to a database
-
-                                      // Optional: Reset the text fields after submitting
-                                      allergiesController.clear();
-                                      surgeriesController.clear();
-                                      extraDetailsController.clear();
-
-                                      // Optional: Show a confirmation dialog or navigate to a different page
-                                    },
-                                    child: Text('Submit'),
-                                  ),
                                 ],
                               ),
                             ),
