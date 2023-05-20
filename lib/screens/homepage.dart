@@ -14,7 +14,6 @@ class HomePage extends StatelessWidget {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser!;
     CollectionReference users = _firestore.collection('users');
-    print(user.uid);
     return Scaffold(
       body: FutureBuilder<DocumentSnapshot>(
           future: users.doc(user.uid).get(),
@@ -28,7 +27,6 @@ class HomePage extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.done) {
               Map<String, dynamic> snap =
                   snapshot.data!.data() as Map<String, dynamic>;
-              print(snap['type']);
               if (snap['type'] == 'doctor') {
                 return DoctorHomeScreen(
                   snap: snap,

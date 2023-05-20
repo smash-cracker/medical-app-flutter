@@ -24,7 +24,6 @@ class _InsuranceDetailsState extends State<InsuranceDetails> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   getParticipantIDs() async {
-    print('us');
     final documentSnapshot = await _firestore
         .collection('insurances')
         .doc(widget.dSnap['insuranceID'])
@@ -32,41 +31,9 @@ class _InsuranceDetailsState extends State<InsuranceDetails> {
     for (var x in documentSnapshot.data()!['interested']) {
       if (x != null) {
         participantIDs.add(x);
-        // print(x['id']);
       }
     }
-    print("participantIDs");
-    print(participantIDs);
-    // participantIDs = widget.dsnap['certificate']['id'];
   }
-  // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  // final user = FirebaseAuth.instance.currentUser!;
-
-  // Future applyToTeach() async {
-  //   try {
-  //     await _firestore.collection('users').doc(user.uid).update({
-  //       'applied': FieldValue.arrayUnion(
-  //         [widget.dSnap['requestID']],
-  //       ),
-  //     });
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
-
-  //   try {
-  //     await _firestore
-  //         .collection('requests')
-  //         .doc(widget.dSnap['requestID'])
-  //         .update({
-  //       'applicants': FieldValue.arrayUnion(
-  //         [user.uid],
-  //       ),
-  //     });
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

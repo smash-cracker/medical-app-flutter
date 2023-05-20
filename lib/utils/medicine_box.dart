@@ -275,7 +275,6 @@ class _MedicineBoxState extends State<MedicineBox> {
                           setState(() {
                             _selectedTime = filteredList[index];
                             _addMedicine();
-                            print(medicinePrescriptions);
                           });
                           Navigator.pop(context);
                         },

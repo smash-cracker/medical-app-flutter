@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, iterable_contains_unrelated_type
 
 import 'dart:math';
 
@@ -32,9 +32,36 @@ class _BookDoctorState extends State<BookDoctor> {
   DateTime currentDateTime = DateTime.now();
   int _selected = DateTime.now().day;
   int _selectedTime = DateTime.now().day;
+  List<String> redList = [];
   String noon = '';
 
   int date = DateTime.now().day;
+  showAlertDialog(BuildContext context, String message) {
+    // set up the button
+    Widget okButton = ElevatedButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Not available"),
+      content: Text(message),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 
   Future<String> bookUser({
     required String userID,
@@ -47,8 +74,6 @@ class _BookDoctorState extends State<BookDoctor> {
         userID: userID, doctorID: doctorID, date: date, bookingID: bookingID);
     try {
       if (true) {
-        print(_selected + 1);
-        print(_selectedTime + 1);
         var now = DateTime.now();
         var formatter = DateFormat('yyyy');
         String year = formatter.format(now);
@@ -113,14 +138,18 @@ class _BookDoctorState extends State<BookDoctor> {
     // }
   }
 
+  List<String> datesList = [];
+
   @override
   void initState() {
+    super.initState();
     currentMonthList = date_util.DateUtils.daysInMonth(currentDateTime);
     currentMonthList.sort((a, b) => a.day.compareTo(b.day));
     currentMonthList = currentMonthList.toSet().toList();
     scrollController =
         ScrollController(initialScrollOffset: 70.0 * currentDateTime.day);
-    super.initState();
+
+    //dates to list
   }
 
   Widget horizontalTimeCapsule() {
@@ -132,23 +161,33 @@ class _BookDoctorState extends State<BookDoctor> {
         itemBuilder: (BuildContext context, int index) {
           int hour = index + 1;
           String time = '$hour:00';
-          return Center(
-            child: TimecapsuleView(index, time),
-          );
+          if (redList.contains('$hour:00')) {
+            return Center(
+              child: TimecapsuleView(index, time, true),
+            );
+          } else {
+            return Center(
+              child: TimecapsuleView(index, time, false),
+            );
+          }
         },
       ),
     );
   }
 
-  Widget TimecapsuleView(int index, String time) {
+  Widget TimecapsuleView(int index, String time, bool red) {
     return Padding(
         padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
         child: GestureDetector(
           onTap: () {
-            setState(() {
-              _selectedTime = index;
-              noon = index < 11 ? 'AM' : 'PM';
-            });
+            if (red) {
+              showAlertDialog(context, "This slot is already booked");
+            } else {
+              setState(() {
+                _selectedTime = index;
+                noon = index < 11 ? 'AM' : 'PM';
+              });
+            }
           },
           child: Container(
             width: 90,
@@ -180,6 +219,7 @@ class _BookDoctorState extends State<BookDoctor> {
                     time,
                     style: TextStyle(
                       fontSize: 28,
+                      color: red ? Colors.red : Colors.black,
                     ),
                   ),
                   index < 11
@@ -188,11 +228,13 @@ class _BookDoctorState extends State<BookDoctor> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
+                            color: red ? Colors.red : Colors.black,
                           ),
                         )
                       : Text(
                           'PM',
                           style: TextStyle(
+                            color: red ? Colors.red : Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -309,6 +351,8 @@ class _BookDoctorState extends State<BookDoctor> {
 
   @override
   Widget build(BuildContext context) {
+    datesList.clear();
+    redList.clear();
     return SafeArea(
       child: Scaffold(
         body: Padding(
@@ -317,151 +361,181 @@ class _BookDoctorState extends State<BookDoctor> {
             right: 18.0,
             left: 18.0,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Icon(
-                      CupertinoIcons.back,
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        widget.dSnap['name'],
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text('Neurologist'),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
+          child: StreamBuilder<QuerySnapshot>(
+              stream: _firestore
+                  .collection('booking')
+                  .where('doctorID', isEqualTo: widget.dSnap['uid'])
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  for (var doc in snapshot.data!.docs) {
+                    String date = doc['consult_date'];
+                    datesList.add(date);
+                  }
 
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20),
-                      ),
-                      child: Image(
-                        image: NetworkImage(
-                          'https://cdn.discordapp.com/attachments/1077128917623775273/1078389322711048312/Smash_Cracker_doctors_helping_patients_cute_helpful_4k_purple_0_d46c0828-40cd-40ab-9f90-dfb4fd03dfb2.png',
-                        ),
-                      ),
-                    ),
-                  ),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.of(context).push(
-                  //       MaterialPageRoute(
-                  //         builder: (_) =>
-                  //         // MedicalHistory(),
-                  //       ),
-                  //     );
-                  //   },
-                  //   child: FaIcon(
-                  //     FontAwesomeIcons.book,
-                  //   ),
-                  // ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0xFF6d6ebb),
-                        Color(0xFFcccdf1),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        'Book',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 45,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      hrizontalCapsuleListView(),
+                  //start logic
+                  for (var x in datesList) {
+                    var datas = x.split(' ');
+                    if (DateFormat('MMMM')
+                            .format(DateTime.now())
+                            .toString()
+                            .substring(0, 3) ==
+                        datas[0]) {
+                      if (_selected + 1 == int.parse(datas[1])) {
+                        redList.add(datas[3]);
+                      }
+                    }
+                  }
 
-                      // horizontalScrollTimeCapsule(),
-                      horizontalTimeCapsule(),
-                      GestureDetector(
-                        onTap: () async {
-                          print(
-                            '${_selected + 1}-${_selectedTime + 1}-$noon',
-                          );
-                          bookUser(
-                              date: DateTime.now().toString(),
-                              doctorID: widget.dSnap['uid'],
-                              userID: user.uid);
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => BookConfirm(
-                                datetime:
-                                    '${_selected + 1}-${_selectedTime + 1}-$noon',
-                                doc: widget.dSnap['name'],
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Icon(
+                              CupertinoIcons.back,
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                widget.dSnap['name'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(widget.dSnap['specialization']),
+                              SizedBox(
+                                height: 10,
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20),
+                              ),
+                              child: Image(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(widget.dSnap['photourl']),
                               ),
                             ),
-                          );
-                        },
+                          ),
+                          // GestureDetector(
+                          //   onTap: () {
+                          //     Navigator.of(context).push(
+                          //       MaterialPageRoute(
+                          //         builder: (_) =>
+                          //         // MedicalHistory(),
+                          //       ),
+                          //     );
+                          //   },
+                          //   child: FaIcon(
+                          //     FontAwesomeIcons.book,
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Expanded(
                         child: Container(
+                          width: double.infinity,
                           decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(40)),
-                          height: 80.0,
-                          width: 200.0,
-                          child: Center(
-                            child: Text(
-                              'Book now',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFF6d6ebb),
+                                Color(0xFFcccdf1),
+                              ],
                             ),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                'Book',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 45,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              hrizontalCapsuleListView(),
+
+                              // horizontalScrollTimeCapsule(),
+                              horizontalTimeCapsule(),
+                              GestureDetector(
+                                onTap: () async {
+                                  print(
+                                    '${_selected + 1}-${_selectedTime + 1}-$noon',
+                                  );
+                                  bookUser(
+                                      date: DateTime.now().toString(),
+                                      doctorID: widget.dSnap['uid'],
+                                      userID: user.uid);
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => BookConfirm(
+                                        datetime:
+                                            '${_selected + 1}-${_selectedTime + 1}-$noon',
+                                        doc: widget.dSnap['name'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(40)),
+                                  height: 80.0,
+                                  width: 200.0,
+                                  child: Center(
+                                    child: Text(
+                                      'Book now',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+                  );
+                }
+
+                return Container();
+              }),
         ),
       ),
     );

@@ -323,9 +323,13 @@ class _AddPrescriptionState extends State<AddPrescription> {
                     child: index == subImagesArray.length
                         ? GestureDetector(
                             onTap: selectFile,
-                            child: Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage('assets/add_image.png'),
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              child: Image(
+                                fit: BoxFit.cover,
+                                image: AssetImage('assets/add_image.png'),
+                              ),
                             ),
                           )
                         : Image.file(

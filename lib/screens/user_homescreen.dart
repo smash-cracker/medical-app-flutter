@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:medical/screens/history.dart';
 import 'package:medical/screens/patients.dart';
 import 'package:medical/screens/consultancy.dart';
 import 'package:medical/screens/insurance_homescreen.dart';
@@ -21,6 +22,32 @@ class UserHomeScreen extends StatefulWidget {
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
   final user = FirebaseAuth.instance.currentUser!;
+  showAlertDialog(BuildContext context, String message) {
+    // set up the button
+    Widget okButton = ElevatedButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Message"),
+      content: Text(message),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +74,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         // ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 35.0, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 35.0, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -118,7 +145,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         ),
                         color: Color(0xFFffddc2),
                       ),
-                      height: MediaQuery.of(context).size.height * 0.23,
+                      height: MediaQuery.of(context).size.height * 0.25,
                       width: MediaQuery.of(context).size.width * 0.38,
                       child: Padding(
                         padding: const EdgeInsets.all(18.0),
@@ -150,28 +177,33 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                 fontSize: 14,
                               ),
                             ),
-                            FutureBuilder<DocumentSnapshot>(
-                                future: FirebaseFirestore.instance
-                                    .collection('users')
-                                    .doc(user.uid)
-                                    .get(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return CircularProgressIndicator();
-                                  }
+                            SizedBox(
+                              height: 30,
+                              child: FutureBuilder<DocumentSnapshot>(
+                                  future: FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(user.uid)
+                                      .get(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<DocumentSnapshot>
+                                          snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return CircularProgressIndicator();
+                                    }
 
-                                  Map<String, dynamic> snap = snapshot.data!
-                                      .data() as Map<String, dynamic>;
+                                    Map<String, dynamic> snap = snapshot.data!
+                                        .data() as Map<String, dynamic>;
 
-                                  if (snap['bookings'] == null) {
-                                    return Text('0 bookings');
-                                  } else {
-                                    final bookingIds = snap['bookings'].length;
-                                    return Text(
-                                        '${bookingIds.toString()} bookings');
-                                  }
-                                })
+                                    if (snap['bookings'] == null) {
+                                      return Text('0 bookings');
+                                    } else {
+                                      final bookingIds =
+                                          snap['bookings'].length;
+                                      return Text(
+                                          '${bookingIds.toString()} bookings');
+                                    }
+                                  }),
+                            )
                           ],
                         ),
                       ),
@@ -194,7 +226,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         ),
                         color: Color(0xFFe5e5fe),
                       ),
-                      height: MediaQuery.of(context).size.height * 0.23,
+                      height: MediaQuery.of(context).size.height * 0.25,
                       width: MediaQuery.of(context).size.width * 0.38,
                       child: Stack(
                         children: [
@@ -232,21 +264,24 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     fontSize: 14,
                                   ),
                                 ),
-                                FutureBuilder<int>(
-                                  future: FirebaseFirestore.instance
-                                      .collection('insurances')
-                                      .get()
-                                      .then((querySnapshot) =>
-                                          querySnapshot.size),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                      return Text(
-                                          '${snapshot.data.toString()} available');
-                                    } else {
-                                      return CircularProgressIndicator();
-                                    }
-                                  },
+                                SizedBox(
+                                  height: 30,
+                                  child: FutureBuilder<int>(
+                                    future: FirebaseFirestore.instance
+                                        .collection('insurances')
+                                        .get()
+                                        .then((querySnapshot) =>
+                                            querySnapshot.size),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
+                                        return Text(
+                                            '${snapshot.data.toString()} available');
+                                      } else {
+                                        return CircularProgressIndicator();
+                                      }
+                                    },
+                                  ),
                                 ),
                                 // Text('6 pharmacies'),
                               ],
@@ -285,86 +320,98 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(30),
+                GestureDetector(
+                  onTap: () {
+                    showAlertDialog(context,
+                        "Smartwatch connectivity not available right now.");
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(30),
+                      ),
+                      color: Color(0xFFfaf8f4),
                     ),
-                    color: Color(0xFFfaf8f4),
-                  ),
-                  height: MediaQuery.of(context).size.height * 0.15,
-                  width: MediaQuery.of(context).size.width * 0.38,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(CupertinoIcons.heart),
-                          Text('Heart Rate'),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            '78 /',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                    height: MediaQuery.of(context).size.height * 0.15,
+                    width: MediaQuery.of(context).size.width * 0.38,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(CupertinoIcons.heart),
+                            Text('Heart Rate'),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              '- /',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text('Heart Rate'),
-                        ],
-                      ),
-                    ],
+                            Text('Heart Rate'),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(30),
+                GestureDetector(
+                  onTap: () {
+                    showAlertDialog(context,
+                        "Smartwatch connectivity not available right now.");
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(30),
+                      ),
+                      color: Color(0xFFfaf8f4),
                     ),
-                    color: Color(0xFFfaf8f4),
-                  ),
-                  height: MediaQuery.of(context).size.height * 0.15,
-                  width: MediaQuery.of(context).size.width * 0.38,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(CupertinoIcons.zzz),
-                          Text('Sleep'),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            '8 /',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                    height: MediaQuery.of(context).size.height * 0.15,
+                    width: MediaQuery.of(context).size.width * 0.38,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(CupertinoIcons.zzz),
+                            Text('Sleep'),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              '- /',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text('hrs'),
-                        ],
-                      ),
-                    ],
+                            Text('hrs'),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -389,44 +436,50 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             //     ],
             //   ),
             // ),
-            Container(
-              width: 130,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                color: Color(0xFF6b6bbf),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    right: 18.0, left: 8, top: 8, bottom: 8),
-                child: Row(
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        color: Color(
-                          0xFF8888cb,
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (_) => MedicalHistory()));
+              },
+              child: Container(
+                width: 130,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: Color(0xFF6b6bbf),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      right: 18.0, left: 8, top: 8, bottom: 8),
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          color: Color(
+                            0xFF8888cb,
+                          ),
                         ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Icon(
-                            CupertinoIcons.chat_bubble,
-                            color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: Icon(
+                              CupertinoIcons.chat_bubble,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      'Chat',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Pres.',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

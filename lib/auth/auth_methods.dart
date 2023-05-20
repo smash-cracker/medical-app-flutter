@@ -63,12 +63,10 @@ class AuthMethods {
     String res = "some error occured";
 
     try {
-      print("trying to login");
       if (email.isNotEmpty || password.isNotEmpty) {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
         res = "success";
-        print("login");
       } else {
         res = "Please enter all fields";
       }
@@ -129,9 +127,7 @@ class AuthMethods {
   Future<void> resetPassword(String email) async {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException catch (e) {
-      print(e);
-    }
+    } on FirebaseAuthException catch (e) {}
   }
 
   Future<String> addInsurance({

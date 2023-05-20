@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               pageBuilder:
                                   (context, animation, secondaryAnimation) =>
                                       SignupScreen(),
-                              transitionDuration: Duration(seconds: 0),
+                              transitionDuration: Duration(seconds: 1),
                             ),
                           );
                         },

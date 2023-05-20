@@ -13,10 +13,8 @@ class UserCheck extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            print('huh');
             return HomePage();
           } else {
-            print('no huh');
             return const LoginScreen();
           }
         },

@@ -12,7 +12,6 @@ class DoctorList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(searchText);
     return FutureBuilder(
       future: FirebaseFirestore.instance.collection('users').get(),
       builder: ((context, snapshot) {
@@ -23,7 +22,7 @@ class DoctorList extends StatelessWidget {
         } else {
           final doctorsList = (snapshot.data! as QuerySnapshot)
               .docs
-              .where((doc) => doc['type'] == 'Doctor')
+              .where((doc) => doc['type'] == 'doctor')
               .toList();
           return GridView.builder(
             physics: NeverScrollableScrollPhysics(),
@@ -55,8 +54,19 @@ class DoctorList extends StatelessWidget {
                     //   ),
                     // );
                   },
-                  child: DoctorBox(
-                    dSnap: snap,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => BookDoctor(
+                            dSnap: snap,
+                          ),
+                        ),
+                      );
+                    },
+                    child: DoctorBox(
+                      dSnap: snap,
+                    ),
                   ),
                 );
               }

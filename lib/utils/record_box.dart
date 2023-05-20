@@ -55,7 +55,7 @@ class RecordBox extends StatelessWidget {
                         ),
                         doctorData != null
                             ? Text(
-                                doctorData['Specialization'],
+                                doctorData['specialization'],
                                 style: TextStyle(fontSize: 20),
                               )
                             : Text(

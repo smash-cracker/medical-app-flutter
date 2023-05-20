@@ -1,5 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.medical">
+
+    <queries>
+      <package android:name="com.google.android.apps.maps" />
+      <intent>
+          <action android:name="android.intent.action.VIEW" />
+          <data android:mimeType="text/plain" />
+      </intent>
+  </queries>
    <application
         android:label="medical"
         android:name="${applicationName}"

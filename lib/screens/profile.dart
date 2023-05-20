@@ -99,7 +99,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               ConnectionState.done) {
                             Map<String, dynamic> snap =
                                 snapshot.data!.data() as Map<String, dynamic>;
-                            print(snap['type']);
                             return Column(
                               children: [
                                 ProfilePic(

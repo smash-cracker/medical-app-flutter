@@ -14,7 +14,6 @@ class StorageMethods {
 
     if (inpos) {
       String id = const Uuid().v1();
-      print(id);
       ref = ref.child(id);
     }
     UploadTask uploadTask = ref.putData(file);

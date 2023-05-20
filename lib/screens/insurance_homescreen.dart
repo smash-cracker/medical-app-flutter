@@ -137,7 +137,6 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
                         ),
                       ],
                     ),
-
               widget.cpy
                   ? Text('Welcome to insurance dashboard!')
                   : Container(),
@@ -242,7 +241,6 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
                   ),
                 ),
               ),
-
               Expanded(
                 child: widget.cpy
                     ? StreamBuilder<QuerySnapshot>(
@@ -271,9 +269,6 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
                                     document.data() as Map<String, dynamic>;
 
                                 if (data != null) {
-                                  print(_currentValue.runtimeType);
-                                  print('<');
-                                  print(snap['amount'].runtimeType);
                                   if (_currentValue >= snap['amount']) {
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -318,9 +313,6 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
                                     document.data() as Map<String, dynamic>;
 
                                 if (data != null) {
-                                  print(_currentValue.runtimeType);
-                                  print('<');
-                                  print(snap['amount'].runtimeType);
                                   if (_currentValue >= snap['amount']) {
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -341,30 +333,6 @@ class _InsuranceHomescreenState extends State<InsuranceHomescreen> {
                               });
                         }),
               ),
-              // Expanded(
-              //   child: ListView.builder(
-              //       itemCount: 3,
-              //       itemBuilder: (BuildContext context, int index) {
-              //         print(_currentValue);
-              //         print('<');
-              //         print(amounts[index]);
-              //         if (_currentValue >= int.parse(amounts[index])) {
-              //           print('true');
-              //           return Padding(
-              //             padding: const EdgeInsets.symmetric(vertical: 8.0),
-              //             child: Container(
-              //               height: 210,
-              //               child: InsuranceBox(
-              //                 edit: true,
-              //                 amount: amounts[index],
-              //               ),
-              //             ),
-              //           );
-              //         } else {
-              //           return Container();
-              //         }
-              //       }),
-              // ),
             ],
           ),
         ),

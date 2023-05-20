@@ -15,6 +15,44 @@ class _ConsultancyState extends State<Consultancy> {
   bool searchBox = false;
   String searchText = '';
 
+  String selectedOption = 'All';
+
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Filter Options'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                _buildOption('All'),
+                _buildOption('Completed'),
+                _buildOption('Today'),
+                _buildOption('Upcoming'),
+              ],
+            ),
+          ),
+        );
+      },
+    ).then((value) {
+      if (value != null) {
+        selectedOption = value;
+        // Do something with the selected option, such as filter the list
+      }
+    });
+  }
+
+  Widget _buildOption(String option) {
+    return ListTile(
+      title: Text(option),
+      onTap: () {
+        Navigator.of(context)
+            .pop(option); // Close the dialog and return the selected option
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,25 +109,32 @@ class _ConsultancyState extends State<Consultancy> {
                 child: searchBox
                     ? searchBar('Search doctors')
                     : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Chip(
-                            label: Row(
-                              children: [
-                                Text('sort'),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Icon(
-                                  CupertinoIcons.arrowtriangle_down_square,
-                                  size: 16,
-                                )
-                              ],
-                            ),
-                          ),
+                          // GestureDetector(
+                          //   onTap: () {
+                          //     // _showFilterDialog();
+                          //   },
+                          //   child: Chip(
+                          //     label: Row(
+                          //       children: [
+                          //         Text(''),
+                          //         SizedBox(
+                          //           width: 10,
+                          //         ),
+                          //         Icon(
+                          //           CupertinoIcons.arrowtriangle_down_square,
+                          //           size: 16,
+                          //         )
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
                           GestureDetector(
                             onTap: () {
-                              searchBox = true;
+                              setState(() {
+                                searchBox = true;
+                              });
                             },
                             child: Icon(
                               CupertinoIcons.search,

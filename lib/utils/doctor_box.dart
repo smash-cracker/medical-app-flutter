@@ -24,7 +24,7 @@ class DoctorBox extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text('Neurologist'),
+              Text(dSnap['specialization']),
             ],
           ),
           decoration: BoxDecoration(

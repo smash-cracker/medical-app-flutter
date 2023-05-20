@@ -18,18 +18,13 @@ class _UserListForAnalysisState extends State<UserListForAnalysis> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   getParticipantIDs() async {
-    print('us');
     final documentSnapshot =
         await _firestore.collection('insurances').doc(widget.insuranceID).get();
     for (var x in documentSnapshot.data()!['interested']) {
       if (x != null) {
         participantIDs.add(x);
-        // print(x['id']);
       }
     }
-    print("participantIDs");
-    print(participantIDs);
-    // participantIDs = widget.dsnap['certificate']['id'];
   }
 
   @override
@@ -39,7 +34,6 @@ class _UserListForAnalysisState extends State<UserListForAnalysis> {
 
   @override
   Widget build(BuildContext context) {
-    print("setting back to 0");
     participantIDs = [];
     return FutureBuilder(
       future: getParticipantIDs(),
@@ -81,7 +75,6 @@ class _UserListForAnalysisState extends State<UserListForAnalysis> {
                     future: user.doc(participantIDs[index]).get(),
                     builder: (((context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
-                        print(snapshot.data!.data());
                         Map<String, dynamic> snap =
                             snapshot.data!.data() as Map<String, dynamic>;
                         return GestureDetector(

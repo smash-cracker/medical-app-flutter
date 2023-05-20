@@ -14,24 +14,81 @@ class PatientBox extends StatelessWidget {
         dateA?.day == dateB?.day;
   }
 
-  final bookingData;
+  var bookingData;
 
-  PatientBox({super.key, required this.data, this.bookingData});
+  DateTime getdatetime(String dateString) {
+    final parts = dateString.split(' ');
+    final monthStr = parts[0];
+    final day = int.parse(parts[1]);
+    final year = int.parse(parts[2]);
+    final time = int.parse(parts[3].split(':')[0]);
+
+    int month;
+    switch (monthStr) {
+      case 'Jan':
+        month = 1;
+        break;
+      case 'Feb':
+        month = 2;
+        break;
+      case 'Mar':
+        month = 3;
+        break;
+      case 'Apr':
+        month = 4;
+        break;
+      case 'May':
+        month = 5;
+        break;
+      case 'Jun':
+        month = 6;
+        break;
+      case 'Jul':
+        month = 7;
+        break;
+      case 'Aug':
+        month = 8;
+        break;
+      case 'Sep':
+        month = 9;
+        break;
+      case 'Oct':
+        month = 10;
+        break;
+      case 'Nov':
+        month = 11;
+        break;
+      case 'Dec':
+        month = 12;
+        break;
+      default:
+        throw ArgumentError('Invalid month string: $monthStr');
+    }
+
+    return DateTime(year, month, day, time);
+  }
+
+  PatientBox(
+      {super.key,
+      required this.data,
+      this.bookingData,
+      this.isFromDoctor = false});
+  bool isFromDoctor;
   var data;
   String time = '';
   String hour = '';
   String ap = '';
+  bool isAfternoon = false;
   DateTime consultDate = DateTime.now();
+  String formattedDate = '';
   @override
   Widget build(BuildContext context) {
     if (bookingData != null) {
-      String time = bookingData['consult_date'];
+      final consultDateStr = bookingData['consult_date'];
 
-      consultDate = DateFormat.MMMd().add_y().add_jm().parse(time);
-      final isAfternoon = consultDate.hour >= 12;
-      hour = consultDate.hour.toString();
+      consultDate = getdatetime(consultDateStr);
 
-      ap = isAfternoon ? 'pm' : 'am';
+      formattedDate = DateFormat.MMMd().add_y().add_jm().format(consultDate);
     }
     return Scaffold(
       body: Container(
@@ -79,9 +136,15 @@ class PatientBox extends StatelessWidget {
                         SizedBox(
                           height: 10,
                         ),
-                        Text(
-                          'Age 23',
-                        ),
+                        isFromDoctor
+                            ? Container()
+                            : SizedBox(
+                                width: 150,
+                                child: Text(
+                                  data['hospital'],
+                                  overflow: TextOverflow.fade,
+                                ),
+                              ),
                         SizedBox(
                           height: 10,
                         ),
@@ -112,7 +175,7 @@ class PatientBox extends StatelessWidget {
                     ),
                     bookingData != null
                         ? Text(
-                            '${consultDate.day}-${consultDate.month}-${consultDate.year} $hour $ap',
+                            '$formattedDate',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
@@ -127,7 +190,8 @@ class PatientBox extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => PatientDetails(
-                      fromPatient: true,
+                      consultationTime: bookingData["consult_date"],
+                      fromPatient: !isFromDoctor,
                       data: data,
                       pin: bookingData["pin"],
                     ),
