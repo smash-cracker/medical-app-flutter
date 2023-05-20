@@ -15,42 +15,46 @@ class AuthMethods {
     required String name,
     required String type,
     required Uint8List file,
-    required String aadhaar,
+    required String allergies,
+    required String surgeries,
+    required String extra,
     String? hospital,
     String? specialization,
     String? doctorId,
   }) async {
     String result = "some error occured";
     try {
-      if (email.isNotEmpty ||
-          password.isNotEmpty ||
-          aadhaar.length == 12 ||
-          name.isNotEmpty) {
+      if (email.isNotEmpty || password.isNotEmpty || name.isNotEmpty) {
         //register
-        UserCredential credential = await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
-
         String photourl =
             await StorageMethods().uploadImageStorage('users', file, false);
 
         if (hospital != null) {
-          await _firestore.collection('users').doc(credential.user!.uid).set({
+          await _firestore
+              .collection('users')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .set({
             'name': name,
             'email': email,
-            'uid': credential.user!.uid,
+            'uid': FirebaseAuth.instance.currentUser!.uid,
             'type': type,
             'photourl': photourl,
             'hospital': hospital,
             'specialization': specialization,
             'patients': [],
-            'aadhaar': aadhaar,
             'doctorId': doctorId,
+            'allergies': allergies,
+            'surgeries': surgeries,
+            'extras': extra,
           });
         } else {
-          await _firestore.collection('users').doc(credential.user!.uid).set({
+          await _firestore
+              .collection('users')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .set({
             'name': name,
             'email': email,
-            'uid': credential.user!.uid,
+            'uid': FirebaseAuth.instance.currentUser!.uid,
             'type': type,
             'photourl': photourl,
           });

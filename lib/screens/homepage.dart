@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:medical/screens/doctor_homescreen.dart';
+import 'package:medical/screens/get_details.dart';
 import 'package:medical/screens/insurance_homescreen.dart';
 import 'package:medical/screens/user_homescreen.dart';
 
@@ -26,7 +27,10 @@ class HomePage extends StatelessWidget {
             }
 
             if (snapshot.data!.data() == null) {
-              return Text('Document does not exist');
+              Navigator.popUntil(context, (route) => route.isFirst);
+
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => BasicDetails()));
             }
 
             if (snapshot.connectionState == ConnectionState.done) {

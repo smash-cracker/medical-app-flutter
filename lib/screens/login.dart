@@ -121,15 +121,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       top: 200,
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                                      SignupScreen(),
-                              transitionDuration: Duration(seconds: 1),
-                            ),
-                          );
+                          // Navigator.pushReplacement(
+                          //   context,
+                          //   PageRouteBuilder(
+                          //     pageBuilder:
+                          //         (context, animation, secondaryAnimation) =>
+                          //             SignupScreen(),
+                          //     transitionDuration: Duration(seconds: 1),
+                          //   ),
+                          // );
                         },
                         child: LoginSignupBox(
                           color: 0xFFd7d5fc,
