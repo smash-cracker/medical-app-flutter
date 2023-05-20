@@ -24,7 +24,14 @@ class HomePage extends StatelessWidget {
                     color: Colors.black, size: 40),
               );
             }
+
+            if (snapshot.data!.data() == null) {
+              return Text('Document does not exist');
+            }
+
             if (snapshot.connectionState == ConnectionState.done) {
+              print("snapshot.data");
+              print(snapshot.data);
               Map<String, dynamic> snap =
                   snapshot.data!.data() as Map<String, dynamic>;
               if (snap['type'] == 'doctor') {

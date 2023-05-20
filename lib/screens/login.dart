@@ -1,8 +1,12 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_new, prefer_const_literals_to_create_immutables
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medical/auth/auth_methods.dart';
 import 'package:medical/screens/homepage.dart';
@@ -18,23 +22,31 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController email = TextEditingController();
-  final TextEditingController password = TextEditingController();
+  final TextEditingController aadhaar = TextEditingController();
+  final TextEditingController otp = TextEditingController();
   bool isFading = true;
   bool _isLoading = false;
+  String phoneNumber = '';
+  String verificatonId = '';
+  String smsCode = '';
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   void login() async {
     setState(() {
       _isLoading = true;
     });
+    smsCode = otp.text;
 
-    String res = await AuthMethods()
-        .loginUser(email: email.text, password: password.text);
-    if (res == 'success') {
-      final user = FirebaseAuth.instance.currentUser!;
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (_) => HomePage()));
-    } else {}
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: verificatonId, smsCode: smsCode);
+
+    await auth.signInWithCredential(credential);
+
+    final user = FirebaseAuth.instance.currentUser!;
+
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (_) => HomePage()));
+
     setState(() {
       _isLoading = false;
     });
@@ -168,9 +180,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: TextField(
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: 'email address',
+                                hintText: 'Aadhaar number',
                               ),
-                              controller: email,
+                              controller: aadhaar,
                             ),
                           ),
                         ]),
@@ -185,10 +197,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: TextField(
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: 'password',
+                                hintText: 'Enter OTP',
                               ),
-                              controller: password,
-                              obscureText: true,
+                              controller: otp,
                             ),
                           ),
                         ]),
@@ -198,18 +209,44 @@ class _LoginScreenState extends State<LoginScreen> {
                       )),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   PageRouteBuilder(
-                    //     pageBuilder: (context, animation, secondaryAnimation) =>
-                    //         PasswordScreen(),
-                    //     transitionDuration: Duration(seconds: 0),
-                    //   ),
-                    // );
+                  onTap: () async {
                     setState(() {
                       isFading = !isFading;
                     });
+                    String jsonString =
+                        await rootBundle.loadString('assets/data.json');
+                    List<dynamic> jsonData = json.decode(jsonString);
+                    List<Map<String, dynamic>> documents =
+                        List<Map<String, dynamic>>.from(jsonData);
+
+                    String userAadhaar = aadhaar.text.trim();
+                    print('checking for $userAadhaar');
+
+                    Map<String, dynamic>? matchingDocument =
+                        documents.firstWhere(
+                      (document) => document['aadhaar'] == userAadhaar,
+                    );
+
+                    print(matchingDocument);
+
+                    if (matchingDocument != null) {
+                      String phoneNmber = matchingDocument['phone'];
+                      phoneNumber = phoneNmber;
+                    } else {
+                      print(
+                          'No matching document found for the given Aadhaar value');
+                    }
+
+                    await FirebaseAuth.instance.verifyPhoneNumber(
+                      phoneNumber: phoneNumber,
+                      verificationCompleted:
+                          (PhoneAuthCredential credential) {},
+                      verificationFailed: (FirebaseAuthException e) {},
+                      codeSent: (String verificationId, int? resendToken) {
+                        verificatonId = verificationId;
+                      },
+                      codeAutoRetrievalTimeout: (String verificationId) {},
+                    );
                   },
                   child: Container(
                     padding: EdgeInsets.all(10),
@@ -235,7 +272,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             : _isLoading
                                 ? CircularProgressIndicator()
                                 : GestureDetector(
-                                    onTap: login,
+                                    onTap: () {
+                                      login();
+                                    },
                                     child: FaIcon(
                                       FontAwesomeIcons.check,
                                       color: Color(0xFFd7d5fc),
