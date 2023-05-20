@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:medical/screens/doctor_homescreen.dart';
 import 'package:medical/screens/history.dart';
 import 'package:medical/screens/patients.dart';
 import 'package:medical/screens/consultancy.dart';
@@ -56,22 +57,26 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        // leading: Padding(
-        //   padding: const EdgeInsets.only(left: 15.0),
-        //   child: Icon(
-        //     CupertinoIcons.person_crop_circle,
-        //     color: Colors.black,
-        //   ),
-        // ),
-        // actions: [
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 15.0),
-        //     child: Icon(
-        //       CupertinoIcons.list_bullet_indent,
-        //       color: Colors.black,
-        //     ),
-        //   ),
-        // ],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 15.0),
+            child: widget.snap["type"] == "doctor"
+                ? GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (_) => DoctorHomeScreen(
+                                snap: widget.snap,
+                              )));
+                    },
+                    child: Icon(
+                      Icons.swap_horiz_rounded,
+                      color: Colors.black,
+                      size: 30,
+                    ),
+                  )
+                : Container(),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 35.0, vertical: 10),

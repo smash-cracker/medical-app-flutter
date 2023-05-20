@@ -159,16 +159,20 @@ class _BookDoctorState extends State<BookDoctor> {
         scrollDirection: Axis.horizontal,
         itemCount: 23,
         itemBuilder: (BuildContext context, int index) {
-          int hour = index + 1;
-          String time = '$hour:00';
-          if (redList.contains('$hour:00')) {
-            return Center(
-              child: TimecapsuleView(index, time, true),
-            );
-          } else {
-            return Center(
-              child: TimecapsuleView(index, time, false),
-            );
+          if (index > 6) {
+            print(index);
+            int hour = index + 1;
+            String time = '$hour:00';
+
+            if (redList.contains('$hour:00')) {
+              return Center(
+                child: TimecapsuleView(index, time, true),
+              );
+            } else {
+              return Center(
+                child: TimecapsuleView(index, time, false),
+              );
+            }
           }
         },
       ),

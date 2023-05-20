@@ -52,6 +52,8 @@ class _SignupScreenState extends State<SignupScreen> {
   final _nameController = TextEditingController();
   final _hospitalController = TextEditingController();
   final _specializationController = TextEditingController();
+  final _aadhaarController = TextEditingController();
+  final _doctorIdController = TextEditingController();
   String selectedRadioButton = 'user';
 
   bool passwordSame() {
@@ -220,6 +222,20 @@ class _SignupScreenState extends State<SignupScreen> {
                             height: 20,
                           ),
                           TextField(
+                            controller: _aadhaarController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Aadhaar Number',
+                              labelStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          TextField(
                             obscureText: true,
                             controller: _passwordController,
                             decoration: InputDecoration(
@@ -342,6 +358,23 @@ class _SignupScreenState extends State<SignupScreen> {
                           SizedBox(
                             height: 20,
                           ),
+                          selectedRadioButton == "doctor"
+                              ? TextField(
+                                  controller: _doctorIdController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Doctor Id',
+                                    labelStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                          SizedBox(
+                            height: 20,
+                          ),
                           SizedBox(
                             height: 60.0,
                             child: Material(
@@ -361,6 +394,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                     hospital: _hospitalController.text,
                                     specialization:
                                         _specializationController.text,
+                                    aadhaar: _aadhaarController.text,
+                                    doctorId: _doctorIdController.text,
                                   );
 
                                   Navigator.of(context).pushReplacement(

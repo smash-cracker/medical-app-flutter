@@ -15,12 +15,17 @@ class AuthMethods {
     required String name,
     required String type,
     required Uint8List file,
+    required String aadhaar,
     String? hospital,
     String? specialization,
+    String? doctorId,
   }) async {
     String result = "some error occured";
     try {
-      if (email.isNotEmpty || password.isNotEmpty) {
+      if (email.isNotEmpty ||
+          password.isNotEmpty ||
+          aadhaar.length == 12 ||
+          name.isNotEmpty) {
         //register
         UserCredential credential = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
@@ -38,6 +43,8 @@ class AuthMethods {
             'hospital': hospital,
             'specialization': specialization,
             'patients': [],
+            'aadhaar': aadhaar,
+            'doctorId': doctorId,
           });
         } else {
           await _firestore.collection('users').doc(credential.user!.uid).set({

@@ -14,6 +14,7 @@ import 'package:medical/screens/insurance_homescreen.dart';
 import 'package:medical/screens/patient_details.dart';
 import 'package:medical/screens/user_bookings.dart';
 import 'package:medical/screens/profile.dart';
+import 'package:medical/screens/user_homescreen.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
   DoctorHomeScreen({super.key, required this.snap});
@@ -101,26 +102,30 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     return CallPickupScreen(
       scaffold: Scaffold(
         backgroundColor: Colors.white,
-        // appBar: AppBar(
-        //   elevation: 0,
-        //   backgroundColor: Colors.white,
-        //   leading: Padding(
-        //     padding: const EdgeInsets.only(left: 15.0),
-        //     child: Icon(
-        //       CupertinoIcons.person_crop_circle,
-        //       color: Colors.black,
-        //     ),
-        //   ),
-        //   actions: [
-        //     Padding(
-        //       padding: const EdgeInsets.only(right: 15.0),
-        //       child: Icon(
-        //         CupertinoIcons.list_bullet_indent,
-        //         color: Colors.black,
-        //       ),
-        //     ),
-        //   ],
-        // ),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: widget.snap["type"] == "doctor"
+                  ? GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => UserHomeScreen(
+                                  snap: widget.snap,
+                                )));
+                      },
+                      child: Icon(
+                        Icons.swap_horiz_rounded,
+                        color: Colors.black,
+                        size: 30,
+                      ),
+                    )
+                  : Container(),
+            ),
+          ],
+        ),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 35.0, vertical: 20),
