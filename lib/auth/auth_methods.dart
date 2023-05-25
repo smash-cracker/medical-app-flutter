@@ -155,6 +155,7 @@ class AuthMethods {
         'insuranceID': docID,
         'amount': amount,
         'desc': desc,
+        'uid': FirebaseAuth.instance.currentUser!.uid,
       });
       result = "success";
     } catch (err) {
