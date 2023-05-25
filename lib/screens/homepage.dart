@@ -28,7 +28,7 @@ class HomePage extends StatelessWidget {
 
             if (snapshot.data!.data() == null) {
               Navigator.popUntil(context, (route) => route.isFirst);
-
+              Future.delayed(Duration.zero);
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => BasicDetails()));
             }

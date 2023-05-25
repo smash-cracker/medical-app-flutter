@@ -116,37 +116,37 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    Positioned(
-                      left: 100,
-                      top: 200,
-                      child: GestureDetector(
-                        onTap: () {
-                          // Navigator.pushReplacement(
-                          //   context,
-                          //   PageRouteBuilder(
-                          //     pageBuilder:
-                          //         (context, animation, secondaryAnimation) =>
-                          //             SignupScreen(),
-                          //     transitionDuration: Duration(seconds: 1),
-                          //   ),
-                          // );
-                        },
-                        child: LoginSignupBox(
-                          color: 0xFFd7d5fc,
-                          one: 'Sign',
-                          two: 'Up',
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 200,
-                      top: 400,
-                      child: LoginSignupBox(
-                        color: 0xFFf9dac6,
-                        one: 'Log',
-                        two: 'In',
-                      ),
-                    ),
+                    // Positioned(
+                    //   left: 100,
+                    //   top: 200,
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       // Navigator.pushReplacement(
+                    //       //   context,
+                    //       //   PageRouteBuilder(
+                    //       //     pageBuilder:
+                    //       //         (context, animation, secondaryAnimation) =>
+                    //       //             SignupScreen(),
+                    //       //     transitionDuration: Duration(seconds: 1),
+                    //       //   ),
+                    //       // );
+                    //     },
+                    //     child: LoginSignupBox(
+                    //       color: 0xFFd7d5fc,
+                    //       one: 'Sign',
+                    //       two: 'Up',
+                    //     ),
+                    //   ),
+                    // ),
+                    // Positioned(
+                    //   left: 200,
+                    //   top: 400,
+                    //   child: LoginSignupBox(
+                    //     color: 0xFFf9dac6,
+                    //     one: 'Log',
+                    //     two: 'In',
+                    //   ),
+                    // ),
                     Positioned(
                       left: 50,
                       top: 300,

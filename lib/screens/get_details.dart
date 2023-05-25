@@ -31,7 +31,7 @@ class _BasicDetails extends State<BasicDetails> {
   final _hospitalController = TextEditingController();
   final _specializationController = TextEditingController();
   final _doctorIdController = TextEditingController();
-  String selectedRadioButton = 'user';
+  String selectedRadioButton = 'insurance';
   TextEditingController allergiesController = TextEditingController();
   TextEditingController surgeriesController = TextEditingController();
   TextEditingController extraDetailsController = TextEditingController();
@@ -243,64 +243,115 @@ class _BasicDetails extends State<BasicDetails> {
                                   SizedBox(
                                     height: 20,
                                   ),
-                                  Container(
-                                      height: 60,
-                                      width: 320,
-                                      child:
-                                          // DropdownSearch<String>(
-                                          //   popupProps: PopupProps.menu(
-                                          //     showSearchBox: true,
-                                          //     showSelectedItems: true,
-                                          //   ),
-                                          //   items: types,
-                                          //   dropdownDecoratorProps: DropDownDecoratorProps(
-                                          //     dropdownSearchDecoration: InputDecoration(
-                                          //       border: OutlineInputBorder(
-                                          //           borderRadius:
-                                          //               BorderRadius.circular(10.0)),
-                                          //       labelText: 'choose role',
-                                          //       labelStyle: TextStyle(
-                                          //           fontWeight: FontWeight.bold,
-                                          //           color: Colors.black),
-                                          //     ),
-                                          //   ),
-                                          //   onChanged: (val) {
-                                          //     setState(() {
-                                          //       selectedRadioButton = val!;
-                                          //     });
-                                          //   },
-                                          // ),
-                                          InputDecorator(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(10.0)),
-                                        )),
-                                        child: DropdownButton(
-                                          value: 'user',
-                                          icon: const Icon(
-                                              Icons.keyboard_arrow_down),
-                                          items: [
-                                            DropdownMenuItem(
-                                              child: Text("User"),
-                                              value: "user",
+                                  GestureDetector(
+                                    onTap: () {
+                                      final x = AlertDialog(
+                                        title: Text('Select User Type'),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ListTile(
+                                              title: Text('User'),
+                                              onTap: () {
+                                                // Handle user selection
+                                                Navigator.pop(context);
+                                                setState(() {
+                                                  selectedRadioButton = 'user';
+                                                });
+                                              },
                                             ),
-                                            DropdownMenuItem(
-                                              child: Text("Doctor"),
-                                              value: "doctor",
+                                            ListTile(
+                                              title: Text('Doctor'),
+                                              onTap: () {
+                                                // Handle doctor selection
+                                                Navigator.pop(
+                                                  context,
+                                                );
+                                                setState(() {
+                                                  selectedRadioButton =
+                                                      'doctor';
+                                                });
+                                              },
                                             ),
-                                            DropdownMenuItem(
-                                              child: Text("Insurance"),
-                                              value: "insurance",
-                                            )
+                                            ListTile(
+                                              title: Text('Insurance'),
+                                              onTap: () {
+                                                // Handle insurance selection
+                                                Navigator.pop(
+                                                  context,
+                                                );
+                                                setState(() {
+                                                  selectedRadioButton =
+                                                      'insurance';
+                                                });
+                                              },
+                                            ),
                                           ],
-                                          onChanged: (val) {
-                                            setState(() {
-                                              selectedRadioButton = val!;
-                                            });
-                                          },
                                         ),
-                                      )),
+                                      );
+                                    },
+                                    child: Container(
+                                        height: 60,
+                                        width: 320,
+                                        child:
+                                            // DropdownSearch<String>(
+                                            //   popupProps: PopupProps.menu(
+                                            //     showSearchBox: true,
+                                            //     showSelectedItems: true,
+                                            //   ),
+                                            //   items: types,
+                                            //   dropdownDecoratorProps: DropDownDecoratorProps(
+                                            //     dropdownSearchDecoration: InputDecoration(
+                                            //       border: OutlineInputBorder(
+                                            //           borderRadius:
+                                            //               BorderRadius.circular(10.0)),
+                                            //       labelText: 'choose role',
+                                            //       labelStyle: TextStyle(
+                                            //           fontWeight: FontWeight.bold,
+                                            //           color: Colors.black),
+                                            //     ),
+                                            //   ),
+                                            //   onChanged: (val) {
+                                            //     setState(() {
+                                            //       selectedRadioButton = val!;
+                                            //     });
+                                            //   },
+                                            // ),
+                                            InputDecorator(
+                                                decoration: InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(
+                                                              10.0)),
+                                                )),
+                                                child: Text(selectedRadioButton)
+                                                // DropdownButton(
+                                                //   value: 'user',
+                                                //   icon: const Icon(
+                                                //       Icons.keyboard_arrow_down),
+                                                //   items: [
+                                                //     DropdownMenuItem(
+                                                //       child: Text("User"),
+                                                //       value: "user",
+                                                //     ),
+                                                //     DropdownMenuItem(
+                                                //       child: Text("Doctor"),
+                                                //       value: "doctor",
+                                                //     ),
+                                                //     DropdownMenuItem(
+                                                //       child: Text("Insurance"),
+                                                //       value: "insurance",
+                                                //     )
+                                                //   ],
+                                                //   onChanged: (val) {
+                                                //     setState(() {
+                                                //       selectedRadioButton = val!;
+                                                //     });
+                                                //   },
+                                                // ),
+                                                )),
+                                  ),
                                   SizedBox(
                                     height: 20,
                                   ),
