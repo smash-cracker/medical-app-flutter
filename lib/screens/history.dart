@@ -31,118 +31,119 @@ class MedicalHistory extends StatelessWidget {
         ],
       ),
       backgroundColor: Color(0xFFe5e5fe),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Transform.rotate(
-                angle: 20,
-                child: FaIcon(
-                  FontAwesomeIcons.leaf,
-                  color: Colors.white,
-                  size: 100,
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                'Here is your',
-                style: TextStyle(fontSize: 30),
-              ),
-              Text(
-                'medical history',
-                style: TextStyle(fontSize: 30),
-              ),
-              SizedBox(
-                height: 150,
-                child: FutureBuilder<DocumentSnapshot>(
-                  future: FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(auth.currentUser!.uid)
-                      .get(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    if (!snapshot.hasData) {
-                      return CircularProgressIndicator();
-                    }
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Transform.rotate(
+            angle: 20,
+            child: FaIcon(
+              FontAwesomeIcons.leaf,
+              color: Colors.white,
+              size: 100,
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Text(
+            'Here is your',
+            style: TextStyle(fontSize: 30),
+          ),
+          Text(
+            'medical history',
+            style: TextStyle(fontSize: 30),
+          ),
+          Expanded(
+            child: SizedBox(
+              child: FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(auth.currentUser!.uid)
+                    .get(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator();
+                  }
 
-                    Map<String, dynamic> snap =
-                        snapshot.data!.data() as Map<String, dynamic>;
+                  Map<String, dynamic> snap =
+                      snapshot.data!.data() as Map<String, dynamic>;
 
-                    if (snap['prescriptions'] == null) {
-                      return Center(
-                        child: Text(
-                          'No prescriptions',
-                        ),
-                      );
-                    } else {
-                      List<dynamic> bookingIds = snap['prescriptions'];
+                  if (snap['prescriptions'] == null) {
+                    return Center(
+                      child: Text(
+                        'No prescriptions',
+                      ),
+                    );
+                  } else {
+                    List<dynamic> bookingIds = snap['prescriptions'];
+                    print(bookingIds);
 
-                      return ListView.builder(
-                        itemCount: bookingIds.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          String bookingId = bookingIds[index];
-                          return FutureBuilder<DocumentSnapshot>(
-                            future: FirebaseFirestore.instance
-                                .collection('prescriptions')
-                                .doc(bookingId)
-                                .get(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<DocumentSnapshot> snapshot) {
-                              if (!snapshot.hasData) {
-                                return Container();
-                              }
-                              Map<String, dynamic> Prescriptiondata =
-                                  snapshot.data!.data() as Map<String, dynamic>;
+                    return ListView.builder(
+                      itemCount: bookingIds.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        String bookingId = bookingIds[index];
+                        print(bookingId);
+                        return FutureBuilder<DocumentSnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('prescriptions')
+                              .doc(bookingId)
+                              .get(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            if (!snapshot.hasData) {
+                              return Container();
+                            }
+                            Map<String, dynamic> Prescriptiondata =
+                                snapshot.data!.data() as Map<String, dynamic>;
 
-                              String doctorId = Prescriptiondata['doctorID'];
+                            print(Prescriptiondata);
 
-                              return FutureBuilder<DocumentSnapshot>(
-                                future: FirebaseFirestore.instance
-                                    .collection('users')
-                                    .doc(doctorId)
-                                    .get(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Container();
-                                  }
-                                  Map<String, dynamic> Doctordata =
-                                      snapshot.data!.data()
-                                          as Map<String, dynamic>;
-                                  String doctorName = Doctordata['name'];
-                                  return SizedBox(
-                                    height: 150,
-                                    child: GestureDetector(
-                                      onTap: () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => Prescription(
-                                            doctorName: doctorName,
-                                            prescription: Prescriptiondata,
-                                          ),
+                            String doctorId = Prescriptiondata['doctorID'];
+
+                            return FutureBuilder<DocumentSnapshot>(
+                              future: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(doctorId)
+                                  .get(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<DocumentSnapshot> snapshotx) {
+                                if (!snapshotx.hasData) {
+                                  return Container();
+                                }
+                                Map<String, dynamic> Doctordata =
+                                    snapshotx.data!.data()
+                                        as Map<String, dynamic>;
+                                String doctorName = Doctordata['name'];
+                                return SizedBox(
+                                  height: 150,
+                                  child: GestureDetector(
+                                    onTap: () => Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => Prescription(
+                                          doctorName: doctorName,
+                                          prescription: Prescriptiondata,
                                         ),
                                       ),
-                                      child: RecordBox(
-                                        doctorData: Doctordata,
-                                      ),
                                     ),
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        },
-                      );
-                    }
-                  },
-                ),
+                                    child: RecordBox(
+                                      doctorData: Doctordata,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
+                },
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

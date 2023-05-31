@@ -204,14 +204,12 @@ class _AddPrescriptionState extends State<AddPrescription> {
                     ),
                     Column(
                       children: [
-                        Text('Dr. Harry'),
-                        Text('09-12-2350'),
+                        // Text('Dr. Harry'),
+                        // Text('09-12-2350'),
                       ],
                     ),
                     GestureDetector(
-                      onTap: () {
-                        uploadPrescription();
-                      },
+                      onTap: () {},
                       child: FaIcon(
                         FontAwesomeIcons.xmark,
                       ),
@@ -234,38 +232,67 @@ class _AddPrescriptionState extends State<AddPrescription> {
                   shrinkWrap: true,
                   itemCount: medicinePrescriptions.length + 1,
                   itemBuilder: (context, snapshot) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              MedicineName(
-                                FontAwesomeIcons.pills,
-                                'Medicine',
-                                _selectedMedicine == null
-                                    ? 'Select'
-                                    : _selectedMedicine!,
-                                Colors.blue[900]!,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              time(
-                                FontAwesomeIcons.clock,
-                                'Time',
-                                'Select',
-                                Colors.redAccent[700]!,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                        ],
-                      ),
-                    );
-                    ;
+                    if (snapshot == medicinePrescriptions.length) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                MedicineName(
+                                  FontAwesomeIcons.pills,
+                                  'Medicine',
+                                  'select',
+                                  Colors.blue[900]!,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                time(
+                                  FontAwesomeIcons.clock,
+                                  'Time',
+                                  'select',
+                                  Colors.redAccent[700]!,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                MedicineName(
+                                  FontAwesomeIcons.pills,
+                                  'Medicine',
+                                  medicinePrescriptions[snapshot].medicineName,
+                                  Colors.blue[900]!,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                time(
+                                  FontAwesomeIcons.clock,
+                                  'Time',
+                                  medicinePrescriptions[snapshot].time,
+                                  Colors.redAccent[700]!,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                   }),
               SizedBox(
                 height: 10,
@@ -318,29 +345,34 @@ class _AddPrescriptionState extends State<AddPrescription> {
                   childAspectRatio: 1,
                 ),
                 itemBuilder: ((context, index) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: index == subImagesArray.length
-                        ? GestureDetector(
-                            onTap: selectFile,
-                            child: Container(
-                              width: 50,
-                              height: 50,
-                              child: Image(
-                                fit: BoxFit.cover,
-                                image: AssetImage('assets/add_image.png'),
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: index == subImagesArray.length
+                          ? GestureDetector(
+                              onTap: selectFile,
+                              child: Container(
+                                  color: Color.fromARGB(255, 181, 153, 187),
+                                  width: 30,
+                                  height: 30,
+                                  child: Icon(Icons.add_a_photo)),
+                            )
+                          : Image.file(
+                              fit: BoxFit.cover,
+                              File(
+                                subImagesArray[index],
                               ),
                             ),
-                          )
-                        : Image.file(
-                            fit: BoxFit.cover,
-                            File(
-                              subImagesArray[index],
-                            ),
-                          ),
+                    ),
                   );
                 }),
               ),
+              ElevatedButton(
+                  onPressed: () {
+                    uploadPrescription();
+                  },
+                  child: Text('Upload Prescription'))
             ],
           ),
         ),
@@ -406,7 +438,7 @@ class _AddPrescriptionState extends State<AddPrescription> {
           );
         },
         child: Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           decoration: BoxDecoration(
             color: Colors.grey[350],
             borderRadius: BorderRadius.circular(10),
@@ -424,7 +456,10 @@ class _AddPrescriptionState extends State<AddPrescription> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(one),
-                  Text(two),
+                  Text(
+                    two,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ],

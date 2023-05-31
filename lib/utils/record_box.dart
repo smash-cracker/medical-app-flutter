@@ -13,7 +13,7 @@ class RecordBox extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: Colors.white,
+          color: Color(0xFFAEE2FF),
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -29,6 +29,8 @@ class RecordBox extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text('April'),
                         Text('09'),
@@ -43,6 +45,7 @@ class RecordBox extends StatelessWidget {
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Row(
                       children: [

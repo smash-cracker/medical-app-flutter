@@ -393,91 +393,201 @@ class PatientDetails extends StatelessWidget {
                 ],
               ),
             ),
-            Expanded(
-              child: FutureBuilder<DocumentSnapshot>(
-                future: FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(auth)
-                    .get(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (!snapshot.hasData) {
-                    return CircularProgressIndicator();
-                  }
+            fromPatient
+                ? Expanded(
+                    child: FutureBuilder<DocumentSnapshot>(
+                      future: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(auth)
+                          // .doc(data['uid'])
+                          .get(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        if (!snapshot.hasData) {
+                          return CircularProgressIndicator();
+                        }
 
-                  Map<String, dynamic> snap =
-                      snapshot.data!.data() as Map<String, dynamic>;
+                        Map<String, dynamic> snap =
+                            snapshot.data!.data() as Map<String, dynamic>;
 
-                  if (snap['prescriptions'] == null) {
-                    return Center(
-                      child: Text(
-                        'No prescriptions',
-                      ),
-                    );
-                  } else {
-                    List<dynamic> bookingIds = snap['prescriptions'];
+                        print(snap['prescriptions']);
 
-                    return ListView.builder(
-                      itemCount: bookingIds.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        String bookingId = bookingIds[index];
-                        return FutureBuilder<DocumentSnapshot>(
-                          future: FirebaseFirestore.instance
-                              .collection('prescriptions')
-                              .doc(bookingId)
-                              .get(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<DocumentSnapshot> snapshot) {
-                            if (!snapshot.hasData) {
-                              return Container();
-                            }
-                            Map<String, dynamic> Prescriptiondata =
-                                snapshot.data!.data() as Map<String, dynamic>;
+                        if (snap['prescriptions'] == null) {
+                          return Center(
+                            child: Text(
+                              'No prescriptions',
+                            ),
+                          );
+                        } else {
+                          List<dynamic> bookingIds = snap['prescriptions'];
 
-                            String doctorId = Prescriptiondata['doctorID'];
-                            if (doctorId == data['uid']) {
+                          return ListView.builder(
+                            itemCount: bookingIds.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              String bookingId = bookingIds[index];
+                              print("bookingIds");
+                              print(bookingId);
                               return FutureBuilder<DocumentSnapshot>(
                                 future: FirebaseFirestore.instance
-                                    .collection('users')
-                                    .doc(doctorId)
+                                    .collection('prescriptions')
+                                    .doc(bookingId)
                                     .get(),
                                 builder: (BuildContext context,
-                                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                                  if (!snapshot.hasData) {
+                                    AsyncSnapshot<DocumentSnapshot> snapshotx) {
+                                  if (!snapshotx.hasData) {
                                     return Container();
                                   }
-                                  Map<String, dynamic> Doctordata =
-                                      snapshot.data!.data()
+                                  Map<String, dynamic> Prescriptiondata =
+                                      snapshotx.data!.data()
                                           as Map<String, dynamic>;
-                                  String doctorName = Doctordata['name'];
-                                  return SizedBox(
-                                    height: 150,
-                                    child: GestureDetector(
-                                      onTap: () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => Prescription(
-                                            doctorName: doctorName,
-                                            prescription: Prescriptiondata,
+
+                                  print(Prescriptiondata);
+
+                                  String doctorId =
+                                      Prescriptiondata['doctorID'];
+                                  if (true) {
+                                    return FutureBuilder<DocumentSnapshot>(
+                                      future: FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(doctorId)
+                                          .get(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<DocumentSnapshot>
+                                              snapshoty) {
+                                        if (!snapshoty.hasData) {
+                                          return Container();
+                                        }
+                                        Map<String, dynamic> Doctordata =
+                                            snapshoty.data!.data()
+                                                as Map<String, dynamic>;
+                                        String doctorName = Doctordata['name'];
+                                        return SizedBox(
+                                          height: 150,
+                                          child: GestureDetector(
+                                            onTap: () =>
+                                                Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) => Prescription(
+                                                  doctorName: doctorName,
+                                                  prescription:
+                                                      Prescriptiondata,
+                                                ),
+                                              ),
+                                            ),
+                                            child: RecordBox(
+                                              doctorData: Doctordata,
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      child: RecordBox(
-                                        doctorData: Doctordata,
-                                      ),
-                                    ),
-                                  );
+                                        );
+                                      },
+                                    );
+                                  }
+                                  return Container();
                                 },
                               );
-                            }
-                            return Container();
-                          },
-                        );
+                            },
+                          );
+                        }
                       },
-                    );
-                  }
-                },
-              ),
-            ),
+                    ),
+                  )
+                : Expanded(
+                    child: FutureBuilder<DocumentSnapshot>(
+                      future: FirebaseFirestore.instance
+                          .collection('users')
+                          //.doc(auth)
+                          .doc(data['uid'])
+                          .get(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        if (!snapshot.hasData) {
+                          return CircularProgressIndicator();
+                        }
+
+                        Map<String, dynamic> snap =
+                            snapshot.data!.data() as Map<String, dynamic>;
+
+                        print(snap['prescriptions']);
+
+                        if (snap['prescriptions'] == null) {
+                          return Center(
+                            child: Text(
+                              'No prescriptions',
+                            ),
+                          );
+                        } else {
+                          List<dynamic> bookingIds = snap['prescriptions'];
+
+                          return ListView.builder(
+                            itemCount: bookingIds.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              String bookingId = bookingIds[index];
+                              print("bookingIds");
+                              print(bookingId);
+                              return FutureBuilder<DocumentSnapshot>(
+                                future: FirebaseFirestore.instance
+                                    .collection('prescriptions')
+                                    .doc(bookingId)
+                                    .get(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<DocumentSnapshot> snapshotx) {
+                                  if (!snapshotx.hasData) {
+                                    return Container();
+                                  }
+                                  Map<String, dynamic> Prescriptiondata =
+                                      snapshotx.data!.data()
+                                          as Map<String, dynamic>;
+
+                                  print(Prescriptiondata);
+
+                                  String doctorId =
+                                      Prescriptiondata['doctorID'];
+                                  if (true) {
+                                    return FutureBuilder<DocumentSnapshot>(
+                                      future: FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(doctorId)
+                                          .get(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<DocumentSnapshot>
+                                              snapshoty) {
+                                        if (!snapshoty.hasData) {
+                                          return Container();
+                                        }
+                                        Map<String, dynamic> Doctordata =
+                                            snapshoty.data!.data()
+                                                as Map<String, dynamic>;
+                                        String doctorName = Doctordata['name'];
+                                        return SizedBox(
+                                          height: 150,
+                                          child: GestureDetector(
+                                            onTap: () =>
+                                                Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) => Prescription(
+                                                  doctorName: doctorName,
+                                                  prescription:
+                                                      Prescriptiondata,
+                                                ),
+                                              ),
+                                            ),
+                                            child: RecordBox(
+                                              doctorData: Doctordata,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  }
+                                  return Container();
+                                },
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
+                  ),
           ],
         ),
       ),
