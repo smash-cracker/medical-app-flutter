@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:boxicons/boxicons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:medical/model/call.dart';
 import 'package:medical/screens/add_prescription.dart';
 import 'package:medical/screens/call_screen.dart';
+import 'package:medical/screens/chat_sccreen.dart';
 import 'package:medical/screens/prescription.dart';
 import 'package:medical/utils/record_box.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -147,6 +149,17 @@ class PatientDetails extends StatelessWidget {
     }
   }
 
+  String chatRoomID(String user1, String user2) {
+    if (user1[0].toLowerCase().codeUnits[0] >
+        user2[0].toLowerCase().codeUnits[0]) {
+      print("$user1$user2");
+      return "$user1$user2";
+    } else {
+      print("$user1$user2");
+      return "$user2$user1";
+    }
+  }
+
   DateTime getdatetime(String dateString) {
     final parts = dateString.split(' ');
     final monthStr = parts[0];
@@ -273,8 +286,24 @@ class PatientDetails extends StatelessWidget {
                         ),
                         Flexible(
                           flex: 1,
-                          child: Icon(
-                            CupertinoIcons.qrcode,
+                          child: GestureDetector(
+                            onTap: () {
+                              String roomID = chatRoomID(
+                                  FirebaseAuth.instance.currentUser!.uid,
+                                  data['uid']);
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => ChatScreenTest(
+                                    //i was hereguideId
+                                    guideId: data['uid'],
+                                    roomID: roomID,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Icon(
+                              Boxicons.bx_chat,
+                            ),
                           ),
                         ),
                       ],
@@ -476,6 +505,8 @@ class PatientDetails extends StatelessWidget {
                                             ),
                                             child: RecordBox(
                                               doctorData: Doctordata,
+                                              PrescriptionData:
+                                                  Prescriptiondata,
                                             ),
                                           ),
                                         );
@@ -573,6 +604,8 @@ class PatientDetails extends StatelessWidget {
                                             ),
                                             child: RecordBox(
                                               doctorData: Doctordata,
+                                              PrescriptionData:
+                                                  Prescriptiondata,
                                             ),
                                           ),
                                         );

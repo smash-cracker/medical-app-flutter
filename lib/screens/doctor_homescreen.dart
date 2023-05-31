@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:medical/screens/call_pickup_screen.dart';
 import 'package:medical/screens/doctor_bookings.dart';
+import 'package:medical/screens/doctor_chatscreen.dart';
 import 'package:medical/screens/patients.dart';
 import 'package:medical/screens/consultancy.dart';
 import 'package:medical/screens/insurance_homescreen.dart';
@@ -15,6 +16,8 @@ import 'package:medical/screens/patient_details.dart';
 import 'package:medical/screens/user_bookings.dart';
 import 'package:medical/screens/profile.dart';
 import 'package:medical/screens/user_homescreen.dart';
+
+import 'chat_sccreen.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
   DoctorHomeScreen({super.key, required this.snap});
@@ -39,6 +42,17 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     return dateA?.year == dateB?.year &&
         dateA?.month == dateB?.month &&
         dateA?.day == dateB?.day;
+  }
+
+  String chatRoomID(String user1, String user2) {
+    if (user1[0].toLowerCase().codeUnits[0] >
+        user2[0].toLowerCase().codeUnits[0]) {
+      print("$user1$user2");
+      return "$user1$user2";
+    } else {
+      print("$user1$user2");
+      return "$user2$user1";
+    }
   }
 
   Future<int> findCount(final String userId) async {
@@ -430,44 +444,55 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               //     ],
               //   ),
               // ),
-              Container(
-                width: 130,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: Color(0xFF6b6bbf),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      right: 18.0, left: 8, top: 8, bottom: 8),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          color: Color(
-                            0xFF8888cb,
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => DoctorChatScreen(
+                        currentUserId: FirebaseAuth.instance.currentUser!.uid,
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 130,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: Color(0xFF6b6bbf),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        right: 18.0, left: 8, top: 8, bottom: 8),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: Color(
+                              0xFF8888cb,
+                            ),
                           ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(
-                            child: Icon(
-                              CupertinoIcons.chat_bubble,
-                              color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Icon(
+                                CupertinoIcons.chat_bubble,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Chat',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          'Chat',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
