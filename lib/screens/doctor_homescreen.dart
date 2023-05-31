@@ -43,30 +43,26 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
 
   Future<int> findCount(final String userId) async {
     int count = 0;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .get()
-        .then((doc) {
-      getPatiendtIDListOfDoctor = doc.data()!['patients'];
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    final getPatiendtIDListOfDoctor = doc.data()!['patients'];
 
-      for (var x in getPatiendtIDListOfDoctor) {
-        FirebaseFirestore.instance
-            .collection('booking')
-            .doc(x)
-            .get()
-            .then((doc) {
-          final date = doc.data()!['consult_date'];
-          final now = DateTime.now();
-          final consultDate = DateFormat.MMMd().add_y().add_jm().parse(date);
-
-          if (isSameDay(now, consultDate)) {
-            count += 1;
-          }
-        });
+    for (var x in getPatiendtIDListOfDoctor) {
+      final bookingDoc =
+          await FirebaseFirestore.instance.collection('booking').doc(x).get();
+      final now = DateTime.now();
+      final consultDateStr = bookingDoc.data()!['consult_date'];
+      final updatedDateStr = consultDateStr.replaceAll(RegExp(r"\s[AP]M$"), "");
+      final dateFormat = DateFormat("MMM d yyyy HH:mm");
+      final consultDate = dateFormat.parse(updatedDateStr);
+      print(consultDate);
+      if (isSameDay(now, consultDate)) {
+        count += 1;
+        print("incrementing count");
       }
-    });
+    }
 
+    print("before return $count");
     return count;
   }
 
@@ -206,8 +202,11 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                                 FutureBuilder<int>(
                                     future: findCount(user.uid),
                                     builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
+                                      if (snapshot.hasData) {}
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
                                         int count = snapshot.data!;
+                                        print(count);
                                         return Text('$count patients');
                                       }
                                       return Container();

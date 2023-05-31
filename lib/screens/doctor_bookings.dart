@@ -32,7 +32,7 @@ class _DoctorBookingListState extends State<DoctorBookingList> {
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (!snapshot.hasData) {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
 
           Map<String, dynamic> snap =
@@ -68,10 +68,11 @@ class _DoctorBookingListState extends State<DoctorBookingList> {
 
                     final consultDateStr = data['consult_date'];
 
-                    final consultDate = DateFormat.MMMd()
-                        .add_y()
-                        .add_jm()
-                        .parse(consultDateStr);
+                    final updatedDateStr =
+                        consultDateStr.replaceAll(RegExp(r"\s[AP]M$"), "");
+
+                    final dateFormat = DateFormat("MMM d yyyy HH:mm");
+                    final consultDate = dateFormat.parse(updatedDateStr);
 
                     if (isSameDay(now, consultDate)) {
                       String doctorId = data['userID'];

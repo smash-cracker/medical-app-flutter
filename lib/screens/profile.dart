@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:medical/auth/auth_methods.dart';
 import 'package:medical/screens/login.dart';
+import 'package:medical/screens/settings.dart';
 import 'package:wiredash/wiredash.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 // import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -117,15 +118,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                   menuText: 'Account Settings',
                                   icon: CupertinoIcons.person_crop_circle,
                                 ),
-                                ProfileMenu(
-                                  press: () {
-                                    // Navigator.of(context).push(MaterialPageRoute(
-                                    //     builder: (context) =>
-                                    //         PersonalApplicationsView()));
-                                  },
-                                  menuText: "menu",
-                                  icon: CupertinoIcons.doc_on_clipboard,
-                                ),
+                                // ProfileMenu(
+                                //   press: () {
+                                //     // Navigator.of(context).push(MaterialPageRoute(
+                                //     //     builder: (context) =>
+                                //     //         PersonalApplicationsView()));
+                                //   },
+                                //   menuText: "menu",
+                                //   icon: CupertinoIcons.doc_on_clipboard,
+                                // ),
                                 // ProfileMenu(
                                 //   press: () {
                                 //     // Navigator.of(context).push(
@@ -138,7 +139,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 //   icon: CupertinoIcons.arrow_left_right_circle,
                                 // ),
                                 ProfileMenu(
-                                  press: () {},
+                                  press: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (_) => MyPage()));
+                                  },
                                   menuText: "Settings",
                                   icon: CupertinoIcons.settings,
                                 ),

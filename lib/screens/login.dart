@@ -262,15 +262,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             size: 30,
                           )
                         : _isLoading
-                            ? Center(
-                                child: CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.white,
-                                  child: CircularProgressIndicator(),
+                            ? SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: Center(
+                                  child: CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: Colors.white,
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 ),
                               )
                             : _isLoading
-                                ? CircularProgressIndicator()
+                                ? SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: CircularProgressIndicator())
                                 : GestureDetector(
                                     onTap: () {
                                       login();
