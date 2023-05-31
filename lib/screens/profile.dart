@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:medical/auth/auth_methods.dart';
 import 'package:medical/screens/login.dart';
+import 'package:wiredash/wiredash.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 // import 'package:loading_animation_widget/loading_animation_widget.dart';
 // import 'package:mentor_mind/auth/auth_methods.dart';
@@ -102,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             return Column(
                               children: [
                                 ProfilePic(
-                                  name: name,
+                                  profilePic: snap['photourl'],
                                 ),
                                 const SizedBox(height: 20.0),
                                 ProfileMenu(
@@ -150,8 +151,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 ProfileMenu(
                                   press: () {
-                                    // Wiredash.of(context)
-                                    //     .show(inheritMaterialTheme: true);
+                                    Wiredash.of(context)
+                                        .show(inheritMaterialTheme: true);
                                   },
                                   menuText: "Help Center",
                                   icon: CupertinoIcons.person_2,
@@ -236,10 +237,10 @@ class ProfileMenu extends StatelessWidget {
 class ProfilePic extends StatelessWidget {
   ProfilePic({
     Key? key,
-    required this.name,
+    required this.profilePic,
   }) : super(key: key);
 
-  final String name;
+  final String profilePic;
   final user = FirebaseAuth.instance.currentUser!;
   @override
   Widget build(BuildContext context) {
@@ -253,11 +254,14 @@ class ProfilePic extends StatelessWidget {
           CircleAvatar(
             backgroundColor: const Color.fromARGB(255, 245, 244, 244),
             child: Container(
-              height: 70,
-              width: 70,
-              child: name != ''
-                  ? SvgPicture.network(
-                      'https://avatars.dicebear.com/api/identicon/${user.uid}.svg',
+              height: 100,
+              width: 100,
+              child: profilePic != ''
+                  ? CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        profilePic,
+                      ),
+                      radius: 60,
                     )
                   : LoadingAnimationWidget.waveDots(
                       color: Colors.black, size: 40),

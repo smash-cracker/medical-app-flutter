@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_new, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, unnecessary_new, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
 
 import 'dart:convert';
 import 'dart:io';
@@ -36,6 +36,7 @@ class _BasicDetails extends State<BasicDetails> {
   TextEditingController surgeriesController = TextEditingController();
   TextEditingController extraDetailsController = TextEditingController();
   Uint8List? _image;
+
   void selectImage() async {
     Uint8List? im = await pickImage(ImageSource.gallery);
 
@@ -57,7 +58,7 @@ class _BasicDetails extends State<BasicDetails> {
     String x = await AuthMethods().signupUser(
         type: selectedRadioButton,
         email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+        password: '',
         name: _nameController.text.trim(),
         file: _image!,
         hospital: _hospitalController.text,
@@ -76,6 +77,7 @@ class _BasicDetails extends State<BasicDetails> {
     });
   }
 
+  String dropdownValue = 'patient';
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -211,146 +213,159 @@ class _BasicDetails extends State<BasicDetails> {
                                   SizedBox(
                                     height: 20,
                                   ),
-                                  TextField(
-                                    obscureText: true,
-                                    controller: _passwordController,
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0)),
-                                      labelText: 'password',
-                                      labelStyle: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
+
+                                  // GestureDetector(
+                                  //   onTap: () {
+                                  //     Future.delayed(Duration.zero, () {
+                                  //       final x = AlertDialog(
+                                  //         title: Text('Select User Type'),
+                                  //         content: Column(
+                                  //           mainAxisSize: MainAxisSize.min,
+                                  //           children: [
+                                  //             ListTile(
+                                  //               title: Text('User'),
+                                  //               onTap: () {
+                                  //                 // Handle user selection
+                                  //                 Navigator.pop(context);
+                                  //                 setState(() {
+                                  //                   selectedRadioButton =
+                                  //                       'user';
+                                  //                 });
+                                  //               },
+                                  //             ),
+                                  //             ListTile(
+                                  //               title: Text('Doctor'),
+                                  //               onTap: () {
+                                  //                 // Handle doctor selection
+                                  //                 Navigator.pop(
+                                  //                   context,
+                                  //                 );
+                                  //                 setState(() {
+                                  //                   selectedRadioButton =
+                                  //                       'doctor';
+                                  //                 });
+                                  //               },
+                                  //             ),
+                                  //             ListTile(
+                                  //               title: Text('Insurance'),
+                                  //               onTap: () {
+                                  //                 // Handle insurance selection
+                                  //                 Navigator.pop(
+                                  //                   context,
+                                  //                 );
+                                  //                 setState(() {
+                                  //                   selectedRadioButton =
+                                  //                       'insurance';
+                                  //                 });
+                                  //               },
+                                  //             ),
+                                  //           ],
+                                  //         ),
+                                  //       );
+                                  //     });
+                                  //   },
+                                  //   child: Container(
+                                  //       height: 60,
+                                  //       width: 320,
+                                  //       child:
+                                  //           // DropdownSearch<String>(
+                                  //           //   popupProps: PopupProps.menu(
+                                  //           //     showSearchBox: true,
+                                  //           //     showSelectedItems: true,
+                                  //           //   ),
+                                  //           //   items: types,
+                                  //           //   dropdownDecoratorProps: DropDownDecoratorProps(
+                                  //           //     dropdownSearchDecoration: InputDecoration(
+                                  //           //       border: OutlineInputBorder(
+                                  //           //           borderRadius:
+                                  //           //               BorderRadius.circular(10.0)),
+                                  //           //       labelText: 'choose role',
+                                  //           //       labelStyle: TextStyle(
+                                  //           //           fontWeight: FontWeight.bold,
+                                  //           //           color: Colors.black),
+                                  //           //     ),
+                                  //           //   ),
+                                  //           //   onChanged: (val) {
+                                  //           //     setState(() {
+                                  //           //       selectedRadioButton = val!;
+                                  //           //     });
+                                  //           //   },
+                                  //           // ),
+                                  //           InputDecorator(
+                                  //               decoration: InputDecoration(
+                                  //                   border: OutlineInputBorder(
+                                  //                 borderRadius:
+                                  //                     const BorderRadius.all(
+                                  //                         Radius.circular(
+                                  //                             10.0)),
+                                  //               )),
+                                  //               child: Text(selectedRadioButton)
+                                  //               // DropdownButton(
+                                  //               //   value: 'user',
+                                  //               //   icon: const Icon(
+                                  //               //       Icons.keyboard_arrow_down),
+                                  //               //   items: [
+                                  //               //     DropdownMenuItem(
+                                  //               //       child: Text("User"),
+                                  //               //       value: "user",
+                                  //               //     ),
+                                  //               //     DropdownMenuItem(
+                                  //               //       child: Text("Doctor"),
+                                  //               //       value: "doctor",
+                                  //               //     ),
+                                  //               //     DropdownMenuItem(
+                                  //               //       child: Text("Insurance"),
+                                  //               //       value: "insurance",
+                                  //               //     )
+                                  //               //   ],
+                                  //               //   onChanged: (val) {
+                                  //               //     setState(() {
+                                  //               //       selectedRadioButton = val!;
+                                  //               //     });
+                                  //               //   },
+                                  //               // ),
+                                  //               )),
+                                  // ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Colors.black,
+                                        width: 0.5,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  TextField(
-                                    obscureText: true,
-                                    controller: _confirmPassword,
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0)),
-                                      labelText: 'confirm password',
-                                      labelStyle: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          DropdownButton<String>(
+                                            value: dropdownValue,
+                                            underline: Container(),
+                                            onChanged: (String? newValue) {
+                                              setState(() {
+                                                selectedRadioButton = newValue!;
+                                                dropdownValue = newValue;
+                                              });
+                                            },
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            items: <String>[
+                                              'patient',
+                                              'doctor',
+                                              'insurance'
+                                            ].map<DropdownMenuItem<String>>(
+                                                (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      final x = AlertDialog(
-                                        title: Text('Select User Type'),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            ListTile(
-                                              title: Text('User'),
-                                              onTap: () {
-                                                // Handle user selection
-                                                Navigator.pop(context);
-                                                setState(() {
-                                                  selectedRadioButton = 'user';
-                                                });
-                                              },
-                                            ),
-                                            ListTile(
-                                              title: Text('Doctor'),
-                                              onTap: () {
-                                                // Handle doctor selection
-                                                Navigator.pop(
-                                                  context,
-                                                );
-                                                setState(() {
-                                                  selectedRadioButton =
-                                                      'doctor';
-                                                });
-                                              },
-                                            ),
-                                            ListTile(
-                                              title: Text('Insurance'),
-                                              onTap: () {
-                                                // Handle insurance selection
-                                                Navigator.pop(
-                                                  context,
-                                                );
-                                                setState(() {
-                                                  selectedRadioButton =
-                                                      'insurance';
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                        height: 60,
-                                        width: 320,
-                                        child:
-                                            // DropdownSearch<String>(
-                                            //   popupProps: PopupProps.menu(
-                                            //     showSearchBox: true,
-                                            //     showSelectedItems: true,
-                                            //   ),
-                                            //   items: types,
-                                            //   dropdownDecoratorProps: DropDownDecoratorProps(
-                                            //     dropdownSearchDecoration: InputDecoration(
-                                            //       border: OutlineInputBorder(
-                                            //           borderRadius:
-                                            //               BorderRadius.circular(10.0)),
-                                            //       labelText: 'choose role',
-                                            //       labelStyle: TextStyle(
-                                            //           fontWeight: FontWeight.bold,
-                                            //           color: Colors.black),
-                                            //     ),
-                                            //   ),
-                                            //   onChanged: (val) {
-                                            //     setState(() {
-                                            //       selectedRadioButton = val!;
-                                            //     });
-                                            //   },
-                                            // ),
-                                            InputDecorator(
-                                                decoration: InputDecoration(
-                                                    border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      const BorderRadius.all(
-                                                          Radius.circular(
-                                                              10.0)),
-                                                )),
-                                                child: Text(selectedRadioButton)
-                                                // DropdownButton(
-                                                //   value: 'user',
-                                                //   icon: const Icon(
-                                                //       Icons.keyboard_arrow_down),
-                                                //   items: [
-                                                //     DropdownMenuItem(
-                                                //       child: Text("User"),
-                                                //       value: "user",
-                                                //     ),
-                                                //     DropdownMenuItem(
-                                                //       child: Text("Doctor"),
-                                                //       value: "doctor",
-                                                //     ),
-                                                //     DropdownMenuItem(
-                                                //       child: Text("Insurance"),
-                                                //       value: "insurance",
-                                                //     )
-                                                //   ],
-                                                //   onChanged: (val) {
-                                                //     setState(() {
-                                                //       selectedRadioButton = val!;
-                                                //     });
-                                                //   },
-                                                // ),
-                                                )),
                                   ),
                                   SizedBox(
                                     height: 20,

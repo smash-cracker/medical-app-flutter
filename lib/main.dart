@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:medical/auth/user_check.dart';
 import 'package:medical/screens/login.dart';
+import 'package:wiredash/wiredash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,19 +17,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Medical',
-      theme: ThemeData(
-        textTheme: TextTheme(
-          bodyText1: GoogleFonts.notoSansDisplay(),
-          bodyText2: GoogleFonts.notoSansDisplay(),
+    return Wiredash(
+      secret: 'RjKaEx8hRbFBbXr-M7Jz5CUg2KYs2sOA',
+      projectId: 'medical-5b2ykyx',
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Medical',
+        theme: ThemeData(
+          textTheme: TextTheme(
+            bodyText1: GoogleFonts.notoSansDisplay(),
+            bodyText2: GoogleFonts.notoSansDisplay(),
+          ),
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            primary: Color(0xFF6b6bbf),
+          ),
         ),
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: Color(0xFF6b6bbf),
-        ),
+        home: HomePageBasic(),
       ),
-      home: HomePageBasic(),
     );
   }
 }

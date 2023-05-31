@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:medical/screens/doctor_homescreen.dart';
 import 'package:medical/screens/get_details.dart';
@@ -26,31 +27,34 @@ class HomePage extends StatelessWidget {
               );
             }
 
-            if (snapshot.data!.data() == null) {
-              Navigator.popUntil(context, (route) => route.isFirst);
-              Future.delayed(Duration.zero);
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => BasicDetails()));
-            }
-
             if (snapshot.connectionState == ConnectionState.done) {
               print("snapshot.data");
               print(snapshot.data);
-              Map<String, dynamic> snap =
-                  snapshot.data!.data() as Map<String, dynamic>;
-              if (snap['type'] == 'doctor') {
-                return DoctorHomeScreen(
-                  snap: snap,
-                );
-              } else {
-                if (snap['type'] == 'insurance') {
-                  return InsuranceHomescreen(
-                    cpy: true,
-                  );
-                } else {
-                  return UserHomeScreen(
+              if (snapshot.data!.data() == null) {
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Future.delayed(Duration.zero);
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => BasicDetails()));
+                });
+              }
+              if (snapshot.data!.data() != null) {
+                Map<String, dynamic> snap =
+                    snapshot.data!.data() as Map<String, dynamic>;
+                if (snap['type'] == 'doctor') {
+                  return DoctorHomeScreen(
                     snap: snap,
                   );
+                } else {
+                  if (snap['type'] == 'insurance') {
+                    return InsuranceHomescreen(
+                      cpy: true,
+                    );
+                  } else {
+                    return UserHomeScreen(
+                      snap: snap,
+                    );
+                  }
                 }
               }
             }
