@@ -193,7 +193,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                       AsyncSnapshot<DocumentSnapshot>
                                           snapshot) {
                                     if (!snapshot.hasData) {
-                                      return CircularProgressIndicator();
+                                      return Center(
+                                          child: CircularProgressIndicator());
                                     }
 
                                     Map<String, dynamic> snap = snapshot.data!
@@ -283,7 +284,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                         return Text(
                                             '${snapshot.data.toString()} available');
                                       } else {
-                                        return CircularProgressIndicator();
+                                        return Center(
+                                            child: CircularProgressIndicator());
                                       }
                                     },
                                   ),
@@ -470,7 +472,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: Center(
                             child: Icon(
-                              CupertinoIcons.chat_bubble,
+                              FontAwesomeIcons.pills,
                               color: Colors.white,
                             ),
                           ),
@@ -480,7 +482,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         width: 10,
                       ),
                       Text(
-                        'Pres.',
+                        'Pills',
                         style: TextStyle(color: Colors.white),
                       ),
                     ],

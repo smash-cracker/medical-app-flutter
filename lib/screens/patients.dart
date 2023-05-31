@@ -31,7 +31,7 @@ class _PatientsState extends State<Patients> {
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (!snapshot.hasData) {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
 
           Map<String, dynamic> snap =

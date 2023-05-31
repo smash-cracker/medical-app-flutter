@@ -17,7 +17,7 @@ class DoctorList extends StatelessWidget {
       builder: ((context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: Center(child: CircularProgressIndicator()),
           );
         } else {
           final doctorsList = (snapshot.data! as QuerySnapshot)

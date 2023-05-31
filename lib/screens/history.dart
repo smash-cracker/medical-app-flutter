@@ -64,7 +64,7 @@ class MedicalHistory extends StatelessWidget {
                 builder: (BuildContext context,
                     AsyncSnapshot<DocumentSnapshot> snapshot) {
                   if (!snapshot.hasData) {
-                    return CircularProgressIndicator();
+                    return Center(child: CircularProgressIndicator());
                   }
 
                   Map<String, dynamic> snap =
@@ -128,6 +128,7 @@ class MedicalHistory extends StatelessWidget {
                                       ),
                                     ),
                                     child: RecordBox(
+                                      PrescriptionData: Prescriptiondata,
                                       doctorData: Doctordata,
                                     ),
                                   ),

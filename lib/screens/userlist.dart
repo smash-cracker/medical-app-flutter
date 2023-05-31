@@ -40,7 +40,7 @@ class _UserListForAnalysisState extends State<UserListForAnalysis> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
-            child: CircularProgressIndicator(),
+            child: Center(child: CircularProgressIndicator()),
           );
         }
         return Scaffold(

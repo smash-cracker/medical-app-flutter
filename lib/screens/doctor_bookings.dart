@@ -32,7 +32,7 @@ class _DoctorBookingListState extends State<DoctorBookingList> {
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: Center(child: CircularProgressIndicator()));
           }
 
           Map<String, dynamic> snap =

@@ -1,13 +1,18 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class RecordBox extends StatelessWidget {
   final doctorData;
-  const RecordBox({super.key, this.doctorData});
+  final PrescriptionData;
+  RecordBox({super.key, this.doctorData, this.PrescriptionData});
 
   @override
   Widget build(BuildContext context) {
+    DateTime dateTime = PrescriptionData['time'].toDate();
+    String monthName = DateFormat('MMMM').format(dateTime);
+    String day = dateTime.day.toString();
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Container(
@@ -32,8 +37,8 @@ class RecordBox extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text('April'),
-                        Text('09'),
+                        Text(monthName),
+                        Text(day),
                       ],
                     ),
                   ),
@@ -49,10 +54,6 @@ class RecordBox extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          'Cardiac',
-                          style: TextStyle(fontSize: 20),
-                        ),
                         SizedBox(
                           width: 10,
                         ),
@@ -62,20 +63,17 @@ class RecordBox extends StatelessWidget {
                                 style: TextStyle(fontSize: 20),
                               )
                             : Text(
-                                'Specialization',
+                                doctorData['specialization'],
                                 style: TextStyle(fontSize: 20),
                               ),
                       ],
                     ),
                     Row(
                       children: [
-                        Text('Cardiology'),
                         SizedBox(
                           width: 20,
                         ),
-                        doctorData != null
-                            ? Text(doctorData['name'])
-                            : Text('Dr. Abhijith'),
+                        Text(doctorData['name']),
                       ],
                     ),
                   ],

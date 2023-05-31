@@ -277,7 +277,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? SizedBox(
                                     width: 50,
                                     height: 50,
-                                    child: CircularProgressIndicator())
+                                    child: Center(
+                                        child: CircularProgressIndicator()))
                                 : GestureDetector(
                                     onTap: () {
                                       login();

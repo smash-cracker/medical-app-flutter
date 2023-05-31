@@ -404,7 +404,7 @@ class PatientDetails extends StatelessWidget {
                       builder: (BuildContext context,
                           AsyncSnapshot<DocumentSnapshot> snapshot) {
                         if (!snapshot.hasData) {
-                          return CircularProgressIndicator();
+                          return Center(child: CircularProgressIndicator());
                         }
 
                         Map<String, dynamic> snap =
@@ -501,7 +501,7 @@ class PatientDetails extends StatelessWidget {
                       builder: (BuildContext context,
                           AsyncSnapshot<DocumentSnapshot> snapshot) {
                         if (!snapshot.hasData) {
-                          return CircularProgressIndicator();
+                          return Center(child: CircularProgressIndicator());
                         }
 
                         Map<String, dynamic> snap =

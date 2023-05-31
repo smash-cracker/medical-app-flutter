@@ -58,7 +58,7 @@ class _CallScreenState extends State<CallScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: client == null
-          ? const CircularProgressIndicator()
+          ? Center(child: const CircularProgressIndicator())
           : SafeArea(
               child: Stack(
                 children: [
